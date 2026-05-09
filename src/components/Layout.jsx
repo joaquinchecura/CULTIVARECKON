@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Activity, ClipboardList, Dumbbell, User, BarChart3, Menu, X, LogOut, HeadphonesIcon } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { base44 } from '@/api/entities';
+import { useAuth } from '@/lib/AuthContext';
 import ContactSpecialistModal from './ContactSpecialistModal';
 
 const navItems = [
@@ -17,7 +17,9 @@ export default function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showContact, setShowContact] = useState(false);
-  const handleLogout = () => base44.auth.logout('/');
+  const { logout } = useAuth();
+
+  const handleLogout = () => logout();
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -73,7 +75,6 @@ export default function Layout() {
       {/* Mobile topbar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-
           <span className="font-semibold text-sm">CultivaFitness RECKON</span>
         </div>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="p-3 -mr-2 text-muted-foreground hover:text-foreground">
