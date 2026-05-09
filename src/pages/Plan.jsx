@@ -63,17 +63,13 @@ export default function Plan() {
 
     const prompt = buildPrompt(profile, health, assessment, test, planType);
 
-// TODO: Conectar con tu API de IA en IONOS
-      const result = { text: "Plan generado (placeholder)" };
-      prompt,
-      model: 'claude_sonnet_4_6',
-    });
+    // TODO: Conectar con tu API de IA en IONOS
+    const result = { text: "Plan generado (placeholder)" };
 
     // Upload plan content as a file to avoid field size limits
-    const blob = new Blob([result], { type: 'text/plain' });
+    const blob = new Blob([result.text], { type: 'text/plain' });
     // TODO: Implementar subida de archivos con tu backend
-    const file_url = URL.createObjectURL(file);
-    const { file_url } = await entities.integrations.Core.UploadFile({ file });
+    const file_url = URL.createObjectURL(blob);
 
     await archivePrevious();
 
