@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/entities';
+import { entities } from '@/api/entities';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, User, ClipboardList, Dumbbell, BarChart3, CheckCircle2, AlertCircle, HeadphonesIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';

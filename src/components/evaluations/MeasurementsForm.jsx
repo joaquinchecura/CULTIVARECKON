@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { base44 } from '@/api/entities';
+import { entities } from '@/api/entities';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
