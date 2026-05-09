@@ -63,9 +63,8 @@ export default function Plan() {
 
     const prompt = buildPrompt(profile, health, assessment, test, planType);
 
-    // TODO: Conectar con tu API de IA en IONOS
     const result = { text: "Plan generado (placeholder)" };
-
+ 
     // Upload plan content as a file to avoid field size limits
     const blob = new Blob([result.text], { type: 'text/plain' });
     // TODO: Implementar subida de archivos con tu backend
