@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const clerk = useClerk();
   const [authError, setAuthError] = useState(null);
 
-  // Simula el comportamiento de Base44: si no hay sesión, authError = auth_required
+  // Simula el comportamiento de auth: si no hay sesión, authError = auth_required
   useEffect(() => {
     if (isUserLoaded && !isSignedIn) {
       setAuthError({ type: 'auth_required', message: 'Authentication required' });

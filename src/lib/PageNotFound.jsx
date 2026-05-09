@@ -10,7 +10,8 @@ export default function PageNotFound({}) {
         queryKey: ['user'],
         queryFn: async () => {
             try {
-                const user = await entities.auth.me();
+// Auth manejada por Clerk ahora
+                const user = null;
                 return { user, isAuthenticated: true };
             } catch (error) {
                 return { user: null, isAuthenticated: false };

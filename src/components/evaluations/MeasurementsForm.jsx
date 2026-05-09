@@ -51,7 +51,8 @@ export default function MeasurementsForm() {
   });
 
   const uploadPhoto = async (file) => {
-    const { file_url } = await entities.integrations.Core.UploadFile({ file });
+// TODO: Implementar subida de archivos con tu backend
+const file_url = URL.createObjectURL(file);
     return file_url;
   };
 
