@@ -1,0 +1,55 @@
+{
+  "name": "FitnessPlan",
+  "type": "object",
+  "properties": {
+    "user_profile_id": {
+      "type": "string"
+    },
+    "generated_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "plan_type": {
+      "type": "string",
+      "enum": [
+        "Entrenamiento",
+        "Rehabilitaci\u00f3n",
+        "Mixto"
+      ]
+    },
+    "objective": {
+      "type": "string"
+    },
+    "duration_weeks": {
+      "type": "number"
+    },
+    "days_per_week": {
+      "type": "number"
+    },
+    "ai_plan_content": {
+      "type": "string"
+    },
+    "activities_selected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "periodization": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Activo",
+        "Completado",
+        "Archivado"
+      ],
+      "default": "Activo"
+    }
+  },
+  "required": []
+}

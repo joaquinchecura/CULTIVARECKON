@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 60 9% 97%;
+    --foreground: 220 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+    --primary: 195 60% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 5% 93%;
+    --secondary-foreground: 220 15% 25%;
+    --muted: 60 5% 93%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 168 45% 88%;
+    --accent-foreground: 168 50% 25%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 10% 88%;
+    --input: 220 10% 88%;
+    --ring: 195 60% 38%;
+    --radius: 0.75rem;
+    --chart-1: 195 60% 38%;
+    --chart-2: 168 45% 45%;
+    --chart-3: 220 15% 55%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --font-inter: 'Inter', sans-serif;
+    --font-playfair: 'Playfair Display', serif;
+  }
+
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 60 9% 94%;
+    --card: 220 18% 13%;
+    --card-foreground: 60 9% 94%;
+    --popover: 220 18% 13%;
+    --popover-foreground: 60 9% 94%;
+    --primary: 195 60% 50%;
+    --primary-foreground: 220 20% 10%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 60 9% 85%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 168 40% 20%;
+    --accent-foreground: 168 45% 75%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 195 60% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+  h1, h2, h3 {
+    @apply font-inter;
+  }
+}
+
+.font-display {
+  font-family: var(--font-playfair);
+}
+
+.step-card {
+  @apply bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200;
+}
+
+.section-divider {
+  @apply border-t border-border my-8;
+}
+
+.badge-pill {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+}

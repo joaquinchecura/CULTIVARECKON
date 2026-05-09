@@ -1,0 +1,72 @@
+{
+  "name": "HealthHistory",
+  "type": "object",
+  "properties": {
+    "user_profile_id": {
+      "type": "string"
+    },
+    "parq_answers": {
+      "type": "object",
+      "properties": {
+        "q1_heart_condition": {
+          "type": "boolean"
+        },
+        "q2_chest_pain_activity": {
+          "type": "boolean"
+        },
+        "q3_chest_pain_rest": {
+          "type": "boolean"
+        },
+        "q4_dizziness": {
+          "type": "boolean"
+        },
+        "q5_bone_joint": {
+          "type": "boolean"
+        },
+        "q6_blood_pressure_medication": {
+          "type": "boolean"
+        },
+        "q7_other_reason": {
+          "type": "boolean"
+        }
+      }
+    },
+    "parq_notes": {
+      "type": "string"
+    },
+    "medical_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "injuries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "surgeries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "medications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "clinical_report": {
+      "type": "string"
+    },
+    "sports_history": {
+      "type": "string"
+    },
+    "current_training": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

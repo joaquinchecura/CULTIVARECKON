@@ -1,0 +1,95 @@
+{
+  "name": "PhysicalAssessment",
+  "type": "object",
+  "properties": {
+    "user_profile_id": {
+      "type": "string"
+    },
+    "assessment_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "weight_kg": {
+      "type": "number"
+    },
+    "height_cm": {
+      "type": "number"
+    },
+    "imc": {
+      "type": "number"
+    },
+    "waist_cm": {
+      "type": "number"
+    },
+    "hip_cm": {
+      "type": "number"
+    },
+    "neck_cm": {
+      "type": "number"
+    },
+    "arm_cm": {
+      "type": "number"
+    },
+    "thigh_cm": {
+      "type": "number"
+    },
+    "waist_hip_ratio": {
+      "type": "number"
+    },
+    "femur_cm": {
+      "type": "number"
+    },
+    "tibia_cm": {
+      "type": "number"
+    },
+    "humerus_cm": {
+      "type": "number"
+    },
+    "body_fat_pct": {
+      "type": "number"
+    },
+    "muscle_mass_kg": {
+      "type": "number"
+    },
+    "visceral_fat": {
+      "type": "number"
+    },
+    "bone_mass_kg": {
+      "type": "number"
+    },
+    "metabolic_age": {
+      "type": "number"
+    },
+    "chronological_age": {
+      "type": "number"
+    },
+    "biological_age_estimate": {
+      "type": "number"
+    },
+    "somatotype_endomorphy": {
+      "type": "number"
+    },
+    "somatotype_mesomorphy": {
+      "type": "number"
+    },
+    "somatotype_ectomorphy": {
+      "type": "number"
+    },
+    "photo_front_url": {
+      "type": "string"
+    },
+    "photo_back_url": {
+      "type": "string"
+    },
+    "photo_side_url": {
+      "type": "string"
+    },
+    "photo_face_url": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

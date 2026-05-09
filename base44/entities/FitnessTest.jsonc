@@ -1,0 +1,103 @@
+{
+  "name": "FitnessTest",
+  "type": "object",
+  "properties": {
+    "user_profile_id": {
+      "type": "string"
+    },
+    "test_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "chair_test_reps": {
+      "type": "number"
+    },
+    "chair_test_time_sec": {
+      "type": "number"
+    },
+    "chair_test_score": {
+      "type": "string",
+      "enum": [
+        "Muy bajo",
+        "Bajo",
+        "Normal",
+        "Bueno",
+        "Excelente"
+      ]
+    },
+    "pushup_reps": {
+      "type": "number"
+    },
+    "pushup_score": {
+      "type": "string",
+      "enum": [
+        "Muy bajo",
+        "Bajo",
+        "Normal",
+        "Bueno",
+        "Excelente"
+      ]
+    },
+    "deep_squat_depth": {
+      "type": "string",
+      "enum": [
+        "Incompleta",
+        "Paralela",
+        "Completa"
+      ]
+    },
+    "deep_squat_compensation": {
+      "type": "string"
+    },
+    "deep_squat_score": {
+      "type": "string",
+      "enum": [
+        "Bajo",
+        "Normal",
+        "Bueno"
+      ]
+    },
+    "balance_dominant_sec": {
+      "type": "number"
+    },
+    "balance_nondominant_sec": {
+      "type": "number"
+    },
+    "balance_score": {
+      "type": "string",
+      "enum": [
+        "Muy bajo",
+        "Bajo",
+        "Normal",
+        "Bueno",
+        "Excelente"
+      ]
+    },
+    "srt_score": {
+      "type": "number"
+    },
+    "srt_interpretation": {
+      "type": "string"
+    },
+    "step_test_heart_rate": {
+      "type": "number"
+    },
+    "step_test_score": {
+      "type": "string",
+      "enum": [
+        "Muy bajo",
+        "Bajo",
+        "Normal",
+        "Bueno",
+        "Excelente"
+      ]
+    },
+    "vo2max_estimate": {
+      "type": "number"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

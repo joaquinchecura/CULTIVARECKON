@@ -1,0 +1,79 @@
+{
+  "name": "UserProfile",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "birth_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "age": {
+      "type": "number"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "Masculino",
+        "Femenino",
+        "Otro"
+      ]
+    },
+    "height_cm": {
+      "type": "number"
+    },
+    "weight_kg": {
+      "type": "number"
+    },
+    "occupation": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string",
+      "enum": [
+        "P\u00e9rdida de peso",
+        "Ganancia muscular",
+        "Rehabilitaci\u00f3n",
+        "Rendimiento deportivo",
+        "Salud general",
+        "Flexibilidad y movilidad"
+      ]
+    },
+    "activity_level": {
+      "type": "string",
+      "enum": [
+        "Sedentario",
+        "Levemente activo",
+        "Moderadamente activo",
+        "Muy activo",
+        "Extremadamente activo"
+      ]
+    },
+    "preferred_activities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "available_days": {
+      "type": "number"
+    },
+    "session_duration_min": {
+      "type": "number"
+    },
+    "equipment_access": {
+      "type": "string",
+      "enum": [
+        "Sin equipamiento (casa)",
+        "Equipamiento b\u00e1sico (casa)",
+        "Gimnasio completo",
+        "Piscina",
+        "Exterior/Parque"
+      ]
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}
