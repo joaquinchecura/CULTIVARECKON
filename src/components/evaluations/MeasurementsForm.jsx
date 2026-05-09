@@ -51,7 +51,7 @@ export default function MeasurementsForm() {
   });
 
   const uploadPhoto = async (file) => {
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    const { file_url } = await entities.integrations.Core.UploadFile({ file });
     return file_url;
   };
 

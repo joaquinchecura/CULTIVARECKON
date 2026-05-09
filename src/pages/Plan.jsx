@@ -63,7 +63,7 @@ export default function Plan() {
 
     const prompt = buildPrompt(profile, health, assessment, test, planType);
 
-    const result = await base44.integrations.Core.InvokeLLM({
+    const result = await entities.integrations.Core.InvokeLLM({
       prompt,
       model: 'claude_sonnet_4_6',
     });
@@ -71,7 +71,7 @@ export default function Plan() {
     // Upload plan content as a file to avoid field size limits
     const blob = new Blob([result], { type: 'text/plain' });
     const file = new File([blob], 'plan.txt', { type: 'text/plain' });
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    const { file_url } = await entities.integrations.Core.UploadFile({ file });
 
     await archivePrevious();
 
