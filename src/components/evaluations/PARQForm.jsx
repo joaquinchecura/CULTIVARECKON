@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { entities } from '@/api/entities';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Save, AlertTriangle, Heart, Brain, Battery } from 'lucide-react';
+import { useReckonQuery } from '@/hooks/useReckonQuery';
 
 const PARQ_QUESTIONS = [
   { key: 'q1_heart_condition', label: '¿Algún médico le ha dicho alguna vez que tiene una enfermedad cardíaca y que solo deba hacer actividad física recomendada por un médico?' },
@@ -21,35 +22,27 @@ const PARQ_QUESTIONS = [
 export default function PARQForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: profiles } = useQuery({ queryKey: ['profiles'], queryFn: () => entities.UserProfile.list() });
-  const { data: records } = useQuery({ queryKey: ['health'], queryFn: () => entities.HealthHistory.list() });
+
+  const { data: profiles } = useReckonQuery('profiles', () => entities.UserProfile.list());
+  const { data: records } = useReckonQuery('health', () => entities.HealthHistory.list());
 
   const existing = records?.[0];
   const profileId = profiles?.[0]?.id;
 
-  // ── PAR-Q ──
   const [parq, setParq] = useState({
     q1_heart_condition: false, q2_chest_pain_activity: false, q3_chest_pain_rest: false,
     q4_dizziness: false, q5_bone_joint: false, q6_blood_pressure_medication: false, q7_other_reason: false,
   });
 
-  // ── Form principal ──
   const [form, setForm] = useState({
-    // PAR-Q ampliado
     parq_notes: '',
     pain_at_rest: '', pain_with_movement: '', dizziness_exertion: false,
     palpitations: false, family_heart_history: false,
     cholesterol_known: '', triglycerides_known: '', blood_pressure_known: '', fasting_glucose_known: '',
     covid_history: '', long_covid: false,
-
-    // Historial clínico
     medical_conditions: '', injuries: '', surgeries: '', medications: '',
     clinical_report: '', sports_history: '', current_training: '',
-
-    // Biomarcadores de recuperación
     hrv_morning: '', spo2: '', morning_temperature: '', resting_heart_rate: '',
-
-    // Mentalidad y adherencia
     motivation_level: '', exercise_confidence: '', perceived_barriers: '',
     social_support: '', dropout_history: '',
   });
@@ -96,6 +89,8 @@ export default function PARQForm() {
       : entities.HealthHistory.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['health'] });
+      // Notificar a otras tabs/instancias
+      localStorage.setItem('_reckon_sync', Date.now().toString());
       toast({ title: 'Evaluación de salud guardada.' });
     },
   });

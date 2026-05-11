@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { entities } from '@/api/entities';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { useReckonQuery } from '@/hooks/useReckonQuery';
 
 const today = new Date().toISOString().split('T')[0];
 const SQUAT_DEPTH = ['Incompleta', 'Paralela', 'Completa'];
 const TALK_TEST = ['Puedo hablar fluido', 'Puedo hablar con dificultad', 'No puedo hablar'];
-
-// ── Auto-score logic ─────────────────────────────────────────────────────────
 
 function scoreChair(reps) {
   const r = Number(reps);
@@ -75,12 +74,9 @@ function scorePlank(sec) {
 function scoreCooper(distanceMeters) {
   const d = Number(distanceMeters);
   if (!d) return '';
-  // VO2max estimado (mL/kg/min) = (distancia en metros - 504.9) / 44.73
   const vo2 = ((d - 504.9) / 44.73).toFixed(1);
   return vo2 > 0 ? vo2 : '';
 }
-
-// ── Standards table component ────────────────────────────────────────────────
 
 const scoreColors = {
   'Muy bajo': 'bg-red-50 text-red-700',
@@ -94,11 +90,7 @@ function StandardsTable({ rows }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="col-span-full">
-      <button
-        type="button"
-        onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 text-xs text-primary hover:underline"
-      >
+      <button type="button" onClick={() => setOpen(o => !o)} className="flex items-center gap-1.5 text-xs text-primary hover:underline">
         {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         Ver estándares de valoración
       </button>
@@ -115,8 +107,6 @@ function StandardsTable({ rows }) {
   );
 }
 
-// ── Section wrapper ──────────────────────────────────────────────────────────
-
 const TestSection = ({ title, description, children }) => (
   <div className="step-card space-y-4">
     <div>
@@ -127,8 +117,6 @@ const TestSection = ({ title, description, children }) => (
   </div>
 );
 
-// ── Score badge ──────────────────────────────────────────────────────────────
-
 function ScoreBadge({ score }) {
   if (!score) return null;
   return (
@@ -138,19 +126,15 @@ function ScoreBadge({ score }) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-
 export default function FitnessTestsForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: profiles } = useQuery({ queryKey: ['profiles'], queryFn: () => entities.UserProfile.list() });
+  const { data: profiles } = useReckonQuery('profiles', () => entities.UserProfile.list());
 
   const profileId = profiles?.[0]?.id;
 
   const [form, setForm] = useState({
     test_date: today,
-
-    // Tests originales
     chair_test_reps: '', chair_test_time_sec: '', chair_test_score: '',
     pushup_reps: '', pushup_score: '',
     deep_squat_depth: '', deep_squat_compensation: '', deep_squat_score: '',
@@ -158,36 +142,24 @@ export default function FitnessTestsForm() {
     srt_score: '', srt_interpretation: '',
     step_test_heart_rate: '', step_test_score: '',
     vo2max_estimate: '',
-
-    // 1. Movilidad articular
     apley_scratch: '', thomas_test: '', knee_to_wall_cm: '',
     thoracic_rotation_deg: '', lumbar_extension_notes: '',
-
-    // 2. Estabilidad y control
     plank_sec: '', plank_score: '',
     side_plank_left_sec: '', side_plank_right_sec: '',
     bird_dog_reps: '', dead_bug_reps: '',
     single_leg_glute_bridge_reps: '', y_balance_notes: '',
-
-    // 3. Fuerza máxima estimada
     max_squat_reps: '', max_pullup_reps: '',
     wall_sit_sec: '', plank_to_pushup_reps: '',
-
-    // 4. Potencia y velocidad
     vertical_jump_cm: '', broad_jump_cm: '',
     medball_throw_m: '', sprint_10m_sec: '', agility_5_10_5_sec: '',
-
-    // 5. Capacidad aeróbica
     cooper_distance_m: '', cooper_vo2max: '',
     two_step_hr_recovery: '', rpe_3min_walk: '', talk_test_result: '',
-
     notes: '',
   });
 
   const setField = (key) => (val) => setForm(f => ({ ...f, [key]: val }));
   const setInput = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
 
-  // Auto-calculate scores
   useEffect(() => { setForm(f => ({ ...f, chair_test_score: scoreChair(f.chair_test_reps) })); }, [form.chair_test_reps]);
   useEffect(() => { setForm(f => ({ ...f, pushup_score: scorePushup(f.pushup_reps) })); }, [form.pushup_reps]);
   useEffect(() => { setForm(f => ({ ...f, deep_squat_score: scoreSquat(f.deep_squat_depth) })); }, [form.deep_squat_depth]);
@@ -200,6 +172,7 @@ export default function FitnessTestsForm() {
     mutationFn: (data) => entities.FitnessTest.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tests'] });
+      localStorage.setItem('_reckon_sync', Date.now().toString());
       toast({ title: 'Tests guardados correctamente.' });
     },
   });
@@ -229,13 +202,7 @@ export default function FitnessTestsForm() {
         <Input type="date" value={form.test_date} onChange={setInput('test_date')} className="mt-1 max-w-xs" />
       </div>
 
-      {/* ═══════════════════════════════════════════════════════ */}
-      {/* 1. MOVILIDAD ARTICULAR                                 */}
-      {/* ═══════════════════════════════════════════════════════ */}
-      <TestSection
-        title="1. Movilidad Articular"
-        description="Evalúa rangos de movimiento clave para prevenir lesiones y optimizar patrones de movimiento."
-      >
+      <TestSection title="1. Movilidad Articular" description="Evalúa rangos de movimiento clave para prevenir lesiones y optimizar patrones de movimiento.">
         <div>
           <Label>Test de hombro (Apley scratch)</Label>
           <Input value={form.apley_scratch} onChange={setInput('apley_scratch')} placeholder="Ej: Alcanza L5, falta 5cm" className="mt-1" />
@@ -262,13 +229,7 @@ export default function FitnessTestsForm() {
         </div>
       </TestSection>
 
-      {/* ═══════════════════════════════════════════════════════ */}
-      {/* 2. ESTABILIDAD Y CONTROL                               */}
-      {/* ═══════════════════════════════════════════════════════ */}
-      <TestSection
-        title="2. Estabilidad y Control Motor"
-        description="Core endurance, asimetrías y control lumbopélvico."
-      >
+      <TestSection title="2. Estabilidad y Control Motor" description="Core endurance, asimetrías y control lumbopélvico.">
         <div>
           <Label>Plank (seg)</Label>
           <Input type="number" value={form.plank_sec} onChange={setInput('plank_sec')} placeholder="60" className="mt-1" />
@@ -309,13 +270,7 @@ export default function FitnessTestsForm() {
         ]} />
       </TestSection>
 
-      {/* ═══════════════════════════════════════════════════════ */}
-      {/* 3. FUERZA MÁXIMA ESTIMADA                              */}
-      {/* ═══════════════════════════════════════════════════════ */}
-      <TestSection
-        title="3. Fuerza Máxima Estimada (sin equipo)"
-        description="Tests de resistencia muscular para estimar fuerza relativa."
-      >
+      <TestSection title="3. Fuerza Máxima Estimada (sin equipo)" description="Tests de resistencia muscular para estimar fuerza relativa.">
         <div>
           <Label>Max rep push-up</Label>
           <Input type="number" value={form.pushup_reps} onChange={setInput('pushup_reps')} placeholder="20" className="mt-1" />
@@ -348,13 +303,7 @@ export default function FitnessTestsForm() {
         ]} />
       </TestSection>
 
-      {/* ═══════════════════════════════════════════════════════ */}
-      {/* 4. POTENCIA Y VELOCIDAD                                */}
-      {/* ═══════════════════════════════════════════════════════ */}
-      <TestSection
-        title="4. Potencia y Velocidad"
-        description="Expresiones de potencia neuromuscular y capacidad de aceleración."
-      >
+      <TestSection title="4. Potencia y Velocidad" description="Expresiones de potencia neuromuscular y capacidad de aceleración.">
         <div>
           <Label>Vertical jump (cm)</Label>
           <Input type="number" value={form.vertical_jump_cm} onChange={setInput('vertical_jump_cm')} placeholder="45" className="mt-1" />
@@ -382,13 +331,7 @@ export default function FitnessTestsForm() {
         </div>
       </TestSection>
 
-      {/* ═══════════════════════════════════════════════════════ */}
-      {/* 5. CAPACIDAD AERÓBICA                                  */}
-      {/* ═══════════════════════════════════════════════════════ */}
-      <TestSection
-        title="5. Capacidad Aeróbica (simplificada)"
-        description="Tests de campo para estimar resistencia cardiovascular."
-      >
+      <TestSection title="5. Capacidad Aeróbica (simplificada)" description="Tests de campo para estimar resistencia cardiovascular.">
         <div>
           <Label>Cooper test — distancia (m)</Label>
           <Input type="number" value={form.cooper_distance_m} onChange={setInput('cooper_distance_m')} placeholder="2200" className="mt-1" />
@@ -420,15 +363,7 @@ export default function FitnessTestsForm() {
         </div>
       </TestSection>
 
-      {/* ═══════════════════════════════════════════════════════ */}
-      {/* TESTS ORIGINALES (mantenidos)                          */}
-      {/* ═══════════════════════════════════════════════════════ */}
-
-      {/* ── Test de la Silla ── */}
-      <TestSection
-        title="Test de Fuerza de Tren Inferior (Test de la Silla)"
-        description="Sentarse y levantarse de una silla en 30 segundos sin apoyo de brazos."
-      >
+      <TestSection title="Test de Fuerza de Tren Inferior (Test de la Silla)" description="Sentarse y levantarse de una silla en 30 segundos sin apoyo de brazos.">
         <div>
           <Label>Repeticiones</Label>
           <Input type="number" value={form.chair_test_reps} onChange={setInput('chair_test_reps')} placeholder="15" className="mt-1" />
@@ -448,11 +383,7 @@ export default function FitnessTestsForm() {
         ]} />
       </TestSection>
 
-      {/* ── Sentadilla Profunda ── */}
-      <TestSection
-        title="Movilidad / Flexibilidad (Sentadilla Profunda)"
-        description="Evalúa la movilidad global: tobillo, cadera, columna torácica y hombros."
-      >
+      <TestSection title="Movilidad / Flexibilidad (Sentadilla Profunda)" description="Evalúa la movilidad global: tobillo, cadera, columna torácica y hombros.">
         <div>
           <Label>Profundidad alcanzada</Label>
           <Select value={form.deep_squat_depth} onValueChange={setField('deep_squat_depth')}>
@@ -475,11 +406,7 @@ export default function FitnessTestsForm() {
         ]} />
       </TestSection>
 
-      {/* ── Equilibrio ── */}
-      <TestSection
-        title="Test de Equilibrio (Unipodal)"
-        description="Pararse en un solo pie con ojos abiertos. Registrar tiempo máximo por lado."
-      >
+      <TestSection title="Test de Equilibrio (Unipodal)" description="Pararse en un solo pie con ojos abiertos. Registrar tiempo máximo por lado.">
         <div>
           <Label>Pierna dominante (seg)</Label>
           <Input type="number" value={form.balance_dominant_sec} onChange={setInput('balance_dominant_sec')} placeholder="45" className="mt-1" />
@@ -499,11 +426,7 @@ export default function FitnessTestsForm() {
         ]} />
       </TestSection>
 
-      {/* ── SRT ── */}
-      <TestSection
-        title="Test Sentarse-Levantarse (SRT)"
-        description="Sentarse y levantarse del suelo sin apoyo de manos, rodillas ni codos. Puntuación del 0 al 10."
-      >
+      <TestSection title="Test Sentarse-Levantarse (SRT)" description="Sentarse y levantarse del suelo sin apoyo de manos, rodillas ni codos. Puntuación del 0 al 10.">
         <div>
           <Label>Puntuación (0–10)</Label>
           <Input type="number" min="0" max="10" step="0.5" value={form.srt_score} onChange={setInput('srt_score')} placeholder="7.5" className="mt-1" />
@@ -518,11 +441,7 @@ export default function FitnessTestsForm() {
         ]} />
       </TestSection>
 
-      {/* ── Step Test ── */}
-      <TestSection
-        title="Test del Escalón (Step Test)"
-        description="3 minutos subiendo y bajando un escalón de 30 cm a ritmo constante. Medir FC a los 60 seg post-ejercicio."
-      >
+      <TestSection title="Test del Escalón (Step Test)" description="3 minutos subiendo y bajando un escalón de 30 cm a ritmo constante. Medir FC a los 60 seg post-ejercicio.">
         <div>
           <Label>FC post-ejercicio (lpm)</Label>
           <Input type="number" value={form.step_test_heart_rate} onChange={setInput('step_test_heart_rate')} placeholder="110" className="mt-1" />

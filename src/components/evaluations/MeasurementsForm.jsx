@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { entities } from '@/api/entities';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, Upload, Apple, Droplets } from 'lucide-react';
+import { useReckonQuery } from '@/hooks/useReckonQuery';
 
 const today = new Date().toISOString().split('T')[0];
 
@@ -20,8 +21,8 @@ const Field = ({ label, value, onChange, placeholder, unit, hint, type = 'number
 export default function MeasurementsForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: profiles } = useQuery({ queryKey: ['profiles'], queryFn: () => entities.UserProfile.list() });
-  const { data: assessments } = useQuery({ queryKey: ['assessments'], queryFn: () => entities.PhysicalAssessment.list('-assessment_date', 10) });
+  const { data: profiles } = useReckonQuery('profiles', () => entities.UserProfile.list());
+  const { data: assessments } = useReckonQuery('assessments', () => entities.PhysicalAssessment.list('-assessment_date', 10));
 
   const latest = assessments?.[0];
   const profileId = profiles?.[0]?.id;
@@ -33,10 +34,8 @@ export default function MeasurementsForm() {
     body_fat_pct: '', muscle_mass_kg: '', visceral_fat: '', bone_mass_kg: '', metabolic_age: '',
     somatotype_endomorphy: '', somatotype_mesomorphy: '', somatotype_ectomorphy: '',
     notes: '',
-    // Composición corporal casera
     skinfold_chest_mm: '', skinfold_abdominal_mm: '', skinfold_thigh_mm: '',
     morning_weight_trend: '',
-    // Nutrición e hidratación
     water_intake_liters: '', protein_intake_g: '', vegetables_per_day: '',
     processed_meals_per_week: '', intermittent_fasting: false, fasting_schedule: '',
   });
@@ -47,7 +46,6 @@ export default function MeasurementsForm() {
   const imc = form.weight_kg && form.height_cm ? (Number(form.weight_kg) / Math.pow(Number(form.height_cm) / 100, 2)).toFixed(1) : '';
   const whr = form.waist_cm && form.hip_cm ? (Number(form.waist_cm) / Number(form.hip_cm)).toFixed(2) : '';
 
-  // Estimación de % grasa por pliegues (Jackson-Pollock 3 sitios, hombre)
   const estimatedFat = (form.skinfold_chest_mm && form.skinfold_abdominal_mm && form.skinfold_thigh_mm && form.weight_kg)
     ? (() => {
         const sum = Number(form.skinfold_chest_mm) + Number(form.skinfold_abdominal_mm) + Number(form.skinfold_thigh_mm);
@@ -62,6 +60,7 @@ export default function MeasurementsForm() {
     mutationFn: (data) => entities.PhysicalAssessment.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assessments'] });
+      localStorage.setItem('_reckon_sync', Date.now().toString());
       toast({ title: 'Mediciones y nutrición guardadas.' });
     },
   });
@@ -125,7 +124,6 @@ export default function MeasurementsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Date */}
       <div className="step-card">
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
@@ -149,7 +147,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* Basic */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Medidas Básicas</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -158,7 +155,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* Circumferences */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Circunferencias (cm)</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -171,7 +167,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* Bone lengths */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Longitudes Óseas (cm)</h2>
         <p className="text-sm text-muted-foreground">Medición de los huesos principales de las extremidades para somatocarta y análisis estructural.</p>
@@ -182,7 +177,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* BIA */}
       <div className="step-card space-y-4">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-foreground">Bioimpedancia (BIA)</h2>
@@ -197,7 +191,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* Somatotype */}
       <div className="step-card space-y-4">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-foreground">Somatotipo / Somatocarta</h2>
@@ -210,7 +203,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* ── Composición Corporal Casera ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Composición Corporal Casera</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -233,7 +225,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* Photos */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Fotos de Evolución</h2>
         <p className="text-sm text-muted-foreground">Las fotos periódicas permiten visualizar cambios en composición corporal.</p>
@@ -257,7 +248,6 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      {/* ── Nutrición e Hidratación ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground flex items-center gap-2">
           <Apple className="w-4 h-4 text-primary" />

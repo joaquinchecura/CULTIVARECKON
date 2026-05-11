@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { entities } from '@/api/entities';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { FileDown, Dumbbell, CheckCircle2, User, Heart, Ruler, Activity, Brain, Battery, Apple, Droplets, AlertTriangle } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import { useReckonQuery } from '@/hooks/useReckonQuery';
 
 const PLAN_TYPES = ['Entrenamiento', 'Rehabilitación', 'Mixto'];
 
@@ -14,11 +14,11 @@ export default function Plan() {
   const { toast } = useToast();
   const [planType, setPlanType] = useState('Entrenamiento');
 
-  const { data: profiles } = useQuery({ queryKey: ['profiles'], queryFn: () => entities.UserProfile.list() });
-  const { data: healthRecords } = useQuery({ queryKey: ['health'], queryFn: () => entities.HealthHistory.list() });
-  const { data: assessments } = useQuery({ queryKey: ['assessments'], queryFn: () => entities.PhysicalAssessment.list('-assessment_date', 1) });
-  const { data: tests } = useQuery({ queryKey: ['tests'], queryFn: () => entities.FitnessTest.list('-test_date', 1) });
-  const { data: plans } = useQuery({ queryKey: ['plans'], queryFn: () => entities.FitnessPlan.list('-generated_date', 5) });
+  const { data: profiles } = useReckonQuery('profiles', () => entities.UserProfile.list());
+  const { data: healthRecords } = useReckonQuery('health', () => entities.HealthHistory.list());
+  const { data: assessments } = useReckonQuery('assessments', () => entities.PhysicalAssessment.list('-assessment_date', 1));
+  const { data: tests } = useReckonQuery('tests', () => entities.FitnessTest.list('-test_date', 1));
+  const { data: plans } = useReckonQuery('plans', () => entities.FitnessPlan.list('-generated_date', 5));
 
   const activePlan = plans?.find(p => p.status === 'Activo');
 
@@ -29,7 +29,6 @@ export default function Plan() {
 
   const hasEnoughData = profile && health;
 
-  // ── Helpers para el PDF ──
   const yesNo = (v) => v === true ? 'Sí' : v === false ? 'No' : 'N/D';
   const fmt = (v, unit = '') => v !== undefined && v !== '' && v !== null ? `${v}${unit}` : 'N/D';
   const arr = (v) => Array.isArray(v) && v.length ? v.join(', ') : 'Ninguno/a';
@@ -63,7 +62,6 @@ export default function Plan() {
       y += 2;
     };
 
-    // ===== HEADER =====
     doc.setFillColor(30, 41, 59);
     doc.rect(0, 0, 210, 18, 'F');
     doc.setTextColor(255, 255, 255);
@@ -71,7 +69,6 @@ export default function Plan() {
     doc.setTextColor(0, 0, 0);
     y += 4;
 
-    // ===== PERFIL COMPLETO =====
     section('1. DATOS PERSONALES Y FÍSICO');
     line(`Nombre: ${fmt(profile.full_name)} | Edad: ${age} años | Género: ${fmt(profile.gender)}`, 10);
     line(`Altura: ${fmt(profile.height_cm, ' cm')} | Peso: ${fmt(profile.weight_kg, ' kg')} | IMC: ${fmt(assessment?.imc)}`, 10);
@@ -84,20 +81,17 @@ export default function Plan() {
     line(`Ejercicios que ODIA: ${fmt(profile.hated_exercises)}`, 10);
     y += 2;
 
-    // Baseline físico
     line(`Tipo de cuerpo: ${fmt(profile.body_type)} | Postura: ${fmt(profile.posture)} | Flexibilidad: ${fmt(profile.flexibility_level, '/10')}`, 10);
     line(`% Grasa estimado: ${fmt(profile.body_fat_pct_estimate, '%')} | Masa magra calc: ${profile.weight_kg && profile.body_fat_pct_estimate ? (Number(profile.weight_kg) * (1 - Number(profile.body_fat_pct_estimate) / 100)).toFixed(1) + ' kg' : 'N/D'}`, 10);
     line(`Circunferencia cuello: ${fmt(profile.neck_circumference_cm, ' cm')} | Muñeca: ${fmt(profile.wrist_circumference_cm, ' cm')}`, 10);
     line(`Dolor crónico: ${fmt(profile.chronic_pain_areas)}`, 10);
     y += 2;
 
-    // Estilo de vida
     line(`Sueño: ${fmt(profile.sleep_hours, ' h')} (calidad ${fmt(profile.sleep_quality, '/10')}) | Estrés: ${fmt(profile.stress_level, '/10')}`, 10);
     line(`Comidas/día: ${fmt(profile.meals_per_day)} | Alcohol: ${fmt(profile.alcohol_frequency)} | Tabaco: ${fmt(profile.smoking_status)}`, 10);
     line(`Cafeína: ${fmt(profile.caffeine_intake)} | Suplementos: ${fmt(profile.current_supplements)}`, 10);
     y += 2;
 
-    // Historial deportivo
     line(`Deportes previos: ${fmt(profile.previous_sports)}`, 10);
     line(`Años entrenando: ${fmt(profile.years_training)} | Mejor marca: ${fmt(profile.personal_best_record)} | Coach previo: ${fmt(profile.previous_coach)}`, 10);
     line(`Lesiones pasadas: ${fmt(profile.past_injuries)}`, 10);
@@ -106,10 +100,8 @@ export default function Plan() {
     line(`Alergias: ${fmt(profile.food_allergies)} | Intolerancias: ${fmt(profile.food_intolerances)}`, 10);
     y += 2;
 
-    // Metas
     line(`Peso objetivo: ${fmt(profile.target_weight_kg, ' kg')} | % Grasa objetivo: ${fmt(profile.target_body_fat_pct, '%')} | Fecha objetivo: ${fmt(profile.target_date)}`, 10);
 
-    // ===== SALUD AMPLIADA =====
     section('2. SCREENING CARDIOVASCULAR Y DOLOR');
     const parq = health.parq_answers || {};
     const anyYes = Object.values(parq).some(Boolean);
@@ -130,19 +122,16 @@ export default function Plan() {
     line(`Historial deportivo: ${fmt(health.sports_history)}`, 10);
     line(`Entrenamiento actual: ${fmt(health.current_training)}`, 10);
 
-    // ===== BIOMARCADORES =====
     section('4. BIOMARCADORES DE RECUPERACIÓN');
     line(`HRV matutino: ${fmt(health.hrv_morning, ' ms')} | SpO2: ${fmt(health.spo2, '%')} | Temp matutina: ${fmt(health.morning_temperature, ' °C')}`, 10);
     line(`FC en reposo: ${fmt(health.resting_heart_rate, ' lpm')}`, 10);
 
-    // ===== MENTALIDAD =====
     section('5. MENTALIDAD Y ADHERENCIA');
     line(`Motivación: ${fmt(health.motivation_level, '/10')} | Autoconfianza: ${fmt(health.exercise_confidence, '/10')}`, 10);
     line(`Barreras percibidas: ${fmt(health.perceived_barriers)}`, 10);
     line(`Soporte social: ${fmt(health.social_support)}`, 10);
     line(`Historial de abandono: ${fmt(health.dropout_history, ' veces')}`, 10);
 
-    // ===== MEDICIONES =====
     if (assessment) {
       section('6. MEDICIONES CORPORALES Y COMPOSICIÓN');
       line(`Fecha: ${fmt(assessment.assessment_date)} | Peso: ${fmt(assessment.weight_kg, ' kg')} | Altura: ${fmt(assessment.height_cm, ' cm')}`, 10);
@@ -161,7 +150,6 @@ export default function Plan() {
       line(`Comidas procesadas: ${fmt(assessment.processed_meals_per_week, '/semana')} | Ayuno intermitente: ${yesNo(assessment.intermittent_fasting)} ${assessment.fasting_schedule ? `(${assessment.fasting_schedule})` : ''}`, 10);
     }
 
-    // ===== TESTS FÍSICOS =====
     if (test) {
       section('8. MOVILIDAD ARTICULAR');
       line(`Apley scratch: ${fmt(test.apley_scratch)} | Thomas test: ${fmt(test.thomas_test)}`, 10);
@@ -183,7 +171,7 @@ export default function Plan() {
       line(`Sprint 10m: ${fmt(test.sprint_10m_sec, ' seg')} | Agility 5-10-5: ${fmt(test.agility_5_10_5_sec, ' seg')}`, 10);
 
       section('12. CAPACIDAD AERÓBICA');
-      line(`Cooper test: ${fmt(test.cooper_distance_m, ' m')} → VO2max est: ${fmt(test.cooper_vo2max, ' ml/kg/min')}`, 10);
+      line(`Cooper test: ${fmt(test.cooper_distance_m, ' m')} -> VO2max est: ${fmt(test.cooper_vo2max, ' ml/kg/min')}`, 10);
       line(`2-step HR recovery: ${fmt(test.two_step_hr_recovery, ' lpm')} | RPE marcha: ${fmt(test.rpe_3min_walk, '/10')}`, 10);
       line(`Talk test: ${fmt(test.talk_test_result)} | Step test FC: ${fmt(test.step_test_heart_rate, ' lpm')} (${fmt(test.step_test_score)})`, 10);
       line(`VO2max estimado (step): ${fmt(test.vo2max_estimate, ' ml/kg/min')}`, 10);
@@ -194,7 +182,6 @@ export default function Plan() {
       line(`SRT: ${fmt(test.srt_score, '/10')} | ${fmt(test.srt_interpretation)}`, 10);
     }
 
-    // ===== FOOTER =====
     y += 5;
     doc.setDrawColor(59, 130, 246);
     doc.line(20, y, 190, y);
@@ -209,7 +196,6 @@ export default function Plan() {
     toast({ title: 'PDF descargado correctamente.', description: 'Incluye todos los datos del perfil, salud, mediciones, nutrición y tests.' });
   };
 
-  // ── Sección de resumen visual ──
   const DataCard = ({ icon: Icon, label, value, color = 'text-primary' }) => (
     <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg text-sm">
       <Icon className={`w-4 h-4 ${color} flex-shrink-0`} />
@@ -238,7 +224,6 @@ export default function Plan() {
         </div>
       )}
 
-      {/* ── Estado de completitud ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Estado de tus evaluaciones</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -265,7 +250,6 @@ export default function Plan() {
         </div>
       </div>
 
-      {/* ── Resumen de datos clave ── */}
       {profile && (
         <div className="step-card space-y-4">
           <h2 className="font-semibold text-foreground flex items-center gap-2">
@@ -295,7 +279,6 @@ export default function Plan() {
         </div>
       )}
 
-      {/* ── Generador de PDF ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Generar ficha para el especialista</h2>
         <div className="flex flex-col sm:flex-row gap-4 items-end">
@@ -316,7 +299,6 @@ export default function Plan() {
         </p>
       </div>
 
-      {/* ── Plan Activo ── */}
       {activePlan && (
         <div className="step-card space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
