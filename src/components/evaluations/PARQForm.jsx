@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { entities } from '@/api/entities';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Save, AlertTriangle, Heart, Brain, Battery } from 'lucide-react';
-import { useReckonQuery } from '@/hooks/useReckonQuery';
 
 const PARQ_QUESTIONS = [
   { key: 'q1_heart_condition', label: '¿Algún médico le ha dicho alguna vez que tiene una enfermedad cardíaca y que solo deba hacer actividad física recomendada por un médico?' },
@@ -23,8 +22,8 @@ export default function PARQForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: profiles } = useReckonQuery('profiles', () => entities.UserProfile.list());
-  const { data: records } = useReckonQuery('health', () => entities.HealthHistory.list());
+  const { data: profiles } = useQuery({ queryKey: ['profiles'], queryFn: () => entities.UserProfile.list() });
+  const { data: records } = useQuery({ queryKey: ['health'], queryFn: () => entities.HealthHistory.list() });
 
   const existing = records?.[0];
   const profileId = profiles?.[0]?.id;
@@ -89,8 +88,6 @@ export default function PARQForm() {
       : entities.HealthHistory.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['health'] });
-      // Notificar a otras tabs/instancias
-      localStorage.setItem('_reckon_sync', Date.now().toString());
       toast({ title: 'Evaluación de salud guardada.' });
     },
   });
@@ -144,7 +141,6 @@ export default function PARQForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* ── PAR-Q ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-primary" />
@@ -174,7 +170,6 @@ export default function PARQForm() {
         </div>
       </div>
 
-      {/* ── PAR-Q Ampliado ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground flex items-center gap-2">
           <Heart className="w-4 h-4 text-primary" />
@@ -242,7 +237,6 @@ export default function PARQForm() {
         </div>
       </div>
 
-      {/* ── Historial Clínico ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Historial Clínico</h2>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -269,7 +263,6 @@ export default function PARQForm() {
         </div>
       </div>
 
-      {/* ── Historial Físico / Deportivo ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Historial Físico / Deportivo</h2>
         <div>
@@ -278,11 +271,10 @@ export default function PARQForm() {
         </div>
         <div>
           <Label>Entrenamiento actual</Label>
-          <Textarea value={form.current_training} onChange={setInput('current_training')} placeholder="Qué hacés actualmente, frecuencia, intensidad..." className="mt-1" rows={3} />
+          <Textarea value={form.current_training} onChange={setInput('current_training')} placeholder="Qué hacés actualmente, frecuencia, intensidad..." className="mt-1" rows={3" />
         </div>
       </div>
 
-      {/* ── Biomarcadores de Recuperación ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground flex items-center gap-2">
           <Battery className="w-4 h-4 text-primary" />
@@ -312,7 +304,6 @@ export default function PARQForm() {
         </div>
       </div>
 
-      {/* ── Mentalidad y Adherencia ── */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground flex items-center gap-2">
           <Brain className="w-4 h-4 text-primary" />
@@ -331,7 +322,7 @@ export default function PARQForm() {
           </div>
           <div className="sm:col-span-2">
             <Label>Barreras percibidas</Label>
-            <Textarea value={form.perceived_barriers} onChange={setInput('perceived_barriers')} placeholder="Tiempo, energía, dolor, miedo al gimnasio, dinero..." className="mt-1" rows={2} />
+            <Textarea value={form.perceived_barriers} onChange={setInput('perceived_barriers')} placeholder="Tiempo, energía, dolor, miedo al gimnasio, dinero..." className="mt-1" rows={2" />
             <p className="text-xs text-muted-foreground mt-1">Para encontrar soluciones dentro de tu plan</p>
           </div>
           <div>

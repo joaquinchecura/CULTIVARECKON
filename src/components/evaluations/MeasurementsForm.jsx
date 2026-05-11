@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { entities } from '@/api/entities';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, Upload, Apple, Droplets } from 'lucide-react';
-import { useReckonQuery } from '@/hooks/useReckonQuery';
 
 const today = new Date().toISOString().split('T')[0];
 
@@ -21,8 +20,8 @@ const Field = ({ label, value, onChange, placeholder, unit, hint, type = 'number
 export default function MeasurementsForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: profiles } = useReckonQuery('profiles', () => entities.UserProfile.list());
-  const { data: assessments } = useReckonQuery('assessments', () => entities.PhysicalAssessment.list('-assessment_date', 10));
+  const { data: profiles } = useQuery({ queryKey: ['profiles'], queryFn: () => entities.UserProfile.list() });
+  const { data: assessments } = useQuery({ queryKey: ['assessments'], queryFn: () => entities.PhysicalAssessment.list('-assessment_date', 10) });
 
   const latest = assessments?.[0];
   const profileId = profiles?.[0]?.id;
@@ -60,7 +59,6 @@ export default function MeasurementsForm() {
     mutationFn: (data) => entities.PhysicalAssessment.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assessments'] });
-      localStorage.setItem('_reckon_sync', Date.now().toString());
       toast({ title: 'Mediciones y nutrición guardadas.' });
     },
   });
