@@ -182,44 +182,47 @@ export default function Profile() {
             <Activity className="w-4 h-4 text-primary" />
             <h2 className="font-semibold text-foreground">Baseline Físico</h2>
           </div>
-          {/* % Grasa con referencia visual */}
-<div className="sm:col-span-2">
-  <Label>% Grasa corporal estimado (compará con las imágenes)</Label>
-  <BodyFatReference 
-    gender={form.gender} 
-    onSelect={(pct) => setForm(f => ({ ...f, body_fat_pct_estimate: pct }))} 
-  />
-  <input type="hidden" value={form.body_fat_pct_estimate} />
-</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* % Grasa con referencia visual */}
+            <div className="sm:col-span-2">
+              <Label>% Grasa corporal estimado (compará con las imágenes)</Label>
+              <BodyFatReference 
+                gender={form.gender} 
+                onSelect={(pct) => setForm(f => ({ ...f, body_fat_pct_estimate: pct }))} 
+              />
+            </div>
 
-{/* Masa muscular calculada automáticamente */}
-<div>
-  <Label>Masa magra estimada (kg) — calculada automáticamente</Label>
-  <div className="mt-1 p-3 bg-secondary/50 rounded-lg">
-    <p className="text-lg font-semibold text-foreground">
-      {form.weight_kg && form.body_fat_pct_estimate
-        ? (Number(form.weight_kg) * (1 - Number(form.body_fat_pct_estimate) / 100)).toFixed(1)
-        : '—'} kg
-    </p>
-    <p className="text-xs text-muted-foreground mt-1">
-      Fórmula: Peso × (1 - %grasa/100)
-    </p>
-  </div>
-</div>
+            {/* Masa magra calculada automáticamente */}
+            <div>
+              <Label>Masa magra estimada (kg) — calculada automáticamente</Label>
+              <div className="mt-1 p-3 bg-secondary/50 rounded-lg">
+                <p className="text-lg font-semibold text-foreground">
+                  {form.weight_kg && form.body_fat_pct_estimate
+                    ? (Number(form.weight_kg) * (1 - Number(form.body_fat_pct_estimate) / 100)).toFixed(1)
+                    : '—'} kg
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Fórmula: Peso × (1 - %grasa/100)
+                </p>
+              </div>
+            </div>
 
-<div>
-  <Label>Masa muscular estimada (kg) — aproximado</Label>
-  <div className="mt-1 p-3 bg-secondary/50 rounded-lg">
-    <p className="text-lg font-semibold text-foreground">
-      {form.weight_kg && form.body_fat_pct_estimate
-        ? (Number(form.weight_kg) * (1 - Number(form.body_fat_pct_estimate) / 100) - 4).toFixed(1)
-        : '—'} kg
-    </p>
-    <p className="text-xs text-muted-foreground mt-1">
-      Fórmula: Masa magra - 4kg (peso huesos/órganos)
-    </p>
-  </div>
-</div>
+            {/* Masa muscular calculada automáticamente */}
+            <div>
+              <Label>Masa muscular estimada (kg) — aproximado</Label>
+              <div className="mt-1 p-3 bg-secondary/50 rounded-lg">
+                <p className="text-lg font-semibold text-foreground">
+                  {form.weight_kg && form.body_fat_pct_estimate
+                    ? (Number(form.weight_kg) * (1 - Number(form.body_fat_pct_estimate) / 100) - 4).toFixed(1)
+                    : '—'} kg
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Fórmula: Masa magra - 4kg (peso huesos/órganos)
+                </p>
+              </div>
+            </div>
+
+            <div>
               <Label>Circunferencia cuello (cm)</Label>
               <Input type="number" value={form.neck_circumference_cm} onChange={e => setForm(f => ({ ...f, neck_circumference_cm: e.target.value }))} placeholder="38" className="mt-1" />
             </div>
