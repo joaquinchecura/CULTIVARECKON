@@ -322,7 +322,7 @@ export default function PARQForm() {
           </div>
           <div className="sm:col-span-2">
             <Label>Barreras percibidas</Label>
-            <Textarea value={form.perceived_barriers} onChange={setInput('perceived_barriers')} placeholder="Tiempo, energía, dolor, miedo al gimnasio, dinero..." className="mt-1" rows={2" />
+            <Textarea value={form.perceived_barriers} onChange={setInput('perceived_barriers')} placeholder="Tiempo, energía, dolor, miedo al gimnasio, dinero..." className="mt-1" rows={2} />
             <p className="text-xs text-muted-foreground mt-1">Para encontrar soluciones dentro de tu plan</p>
           </div>
           <div>
