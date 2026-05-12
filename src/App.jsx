@@ -49,7 +49,14 @@ const AuthenticatedApp = () => {
 function App() {
   return (
     <AuthProvider>
-      <PersistQueryClientProvider client={queryClientInstance} persistOptions={{ persister }}>
+      <PersistQueryClientProvider 
+        client={queryClientInstance} 
+        persistOptions={{ 
+          persister,
+          maxAge: 1000 * 60 * 60 * 24,
+        }}
+        onSuccess={() => console.log('Cache restaurado desde localStorage')}
+      >
         <Router>
           <AuthenticatedApp />
         </Router>
