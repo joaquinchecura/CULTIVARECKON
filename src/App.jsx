@@ -53,7 +53,7 @@ function App() {
         client={queryClientInstance} 
         persistOptions={{ 
           persister,
-          maxAge: 1000 * 60 * 60 * 24,
+          maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
         }}
         onSuccess={() => console.log('Cache restaurado desde localStorage')}
       >
