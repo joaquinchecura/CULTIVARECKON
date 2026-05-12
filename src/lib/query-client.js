@@ -1,12 +1,12 @@
 import { QueryClient } from '@tanstack/react-query';
-import { createSyncStoragePersister } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'; // ✅ CORRECTO
 
 export const queryClientInstance = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      gcTime: 1000 * 60 * 60 * 24, // 24 horas - CRÍTICO para persistencia
+      gcTime: 1000 * 60 * 60 * 24,
       staleTime: Infinity,
     },
   },
