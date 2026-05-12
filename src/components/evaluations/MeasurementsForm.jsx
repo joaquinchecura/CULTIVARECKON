@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { entities } from '@/api/entities';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
@@ -8,6 +8,19 @@ import { Label } from '@/components/ui/label';
 import { Save, Upload, Apple, Droplets } from 'lucide-react';
 
 const today = new Date().toISOString().split('T')[0];
+
+const FORM_INITIAL = {
+  assessment_date: today, weight_kg: '', height_cm: '',
+  waist_cm: '', hip_cm: '', neck_cm: '', arm_cm: '', thigh_cm: '', calf_cm: '',
+  femur_cm: '', tibia_cm: '', humerus_cm: '',
+  body_fat_pct: '', muscle_mass_kg: '', visceral_fat: '', bone_mass_kg: '', metabolic_age: '',
+  somatotype_endomorphy: '', somatotype_mesomorphy: '', somatotype_ectomorphy: '',
+  notes: '',
+  skinfold_chest_mm: '', skinfold_abdominal_mm: '', skinfold_thigh_mm: '',
+  morning_weight_trend: '',
+  water_intake_liters: '', protein_intake_g: '', vegetables_per_day: '',
+  processed_meals_per_week: '', intermittent_fasting: false, fasting_schedule: '',
+};
 
 const Field = ({ label, value, onChange, placeholder, unit, hint, type = 'number' }) => (
   <div>
@@ -26,18 +39,14 @@ export default function MeasurementsForm() {
   const latest = assessments?.[0];
   const profileId = profiles?.[0]?.id;
 
-  const [form, setForm] = useState({
-    assessment_date: today, weight_kg: '', height_cm: '',
-    waist_cm: '', hip_cm: '', neck_cm: '', arm_cm: '', thigh_cm: '', calf_cm: '',
-    femur_cm: '', tibia_cm: '', humerus_cm: '',
-    body_fat_pct: '', muscle_mass_kg: '', visceral_fat: '', bone_mass_kg: '', metabolic_age: '',
-    somatotype_endomorphy: '', somatotype_mesomorphy: '', somatotype_ectomorphy: '',
-    notes: '',
-    skinfold_chest_mm: '', skinfold_abdominal_mm: '', skinfold_thigh_mm: '',
-    morning_weight_trend: '',
-    water_intake_liters: '', protein_intake_g: '', vegetables_per_day: '',
-    processed_meals_per_week: '', intermittent_fasting: false, fasting_schedule: '',
+  // Estado con persistencia en localStorage
+  const [form, setForm] = useState(() => {
+    try { const s = localStorage.getItem('measurements-form'); return s ? JSON.parse(s) : FORM_INITIAL; }
+    catch { return FORM_INITIAL; }
   });
+
+  // Guardar en localStorage en cada cambio
+  useEffect(() => { localStorage.setItem('measurements-form', JSON.stringify(form)); }, [form]);
 
   const [photoFiles, setPhotoFiles] = useState({ front: null, back: null, side: null, face: null });
   const [uploading, setUploading] = useState(false);
@@ -60,6 +69,8 @@ export default function MeasurementsForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assessments'] });
       toast({ title: 'Mediciones y nutrición guardadas.' });
+      // Limpiar localStorage al guardar
+      localStorage.removeItem('measurements-form');
     },
   });
 

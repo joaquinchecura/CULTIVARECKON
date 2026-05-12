@@ -18,6 +18,24 @@ const PARQ_QUESTIONS = [
   { key: 'q7_other_reason', label: '¿Existe algún otro motivo por el que no debería hacer actividad física?' },
 ];
 
+const PARQ_INITIAL = {
+  q1_heart_condition: false, q2_chest_pain_activity: false, q3_chest_pain_rest: false,
+  q4_dizziness: false, q5_bone_joint: false, q6_blood_pressure_medication: false, q7_other_reason: false,
+};
+
+const FORM_INITIAL = {
+  parq_notes: '',
+  pain_at_rest: '', pain_with_movement: '', dizziness_exertion: false,
+  palpitations: false, family_heart_history: false,
+  cholesterol_known: '', triglycerides_known: '', blood_pressure_known: '', fasting_glucose_known: '',
+  covid_history: '', long_covid: false,
+  medical_conditions: '', injuries: '', surgeries: '', medications: '',
+  clinical_report: '', sports_history: '', current_training: '',
+  hrv_morning: '', spo2: '', morning_temperature: '', resting_heart_rate: '',
+  motivation_level: '', exercise_confidence: '', perceived_barriers: '',
+  social_support: '', dropout_history: '',
+};
+
 export default function PARQForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -28,57 +46,61 @@ export default function PARQForm() {
   const existing = records?.[0];
   const profileId = profiles?.[0]?.id;
 
-  const [parq, setParq] = useState({
-    q1_heart_condition: false, q2_chest_pain_activity: false, q3_chest_pain_rest: false,
-    q4_dizziness: false, q5_bone_joint: false, q6_blood_pressure_medication: false, q7_other_reason: false,
+  // Estado con persistencia en localStorage
+  const [parq, setParq] = useState(() => {
+    try { const s = localStorage.getItem('parq-answers'); return s ? JSON.parse(s) : PARQ_INITIAL; }
+    catch { return PARQ_INITIAL; }
   });
 
-  const [form, setForm] = useState({
-    parq_notes: '',
-    pain_at_rest: '', pain_with_movement: '', dizziness_exertion: false,
-    palpitations: false, family_heart_history: false,
-    cholesterol_known: '', triglycerides_known: '', blood_pressure_known: '', fasting_glucose_known: '',
-    covid_history: '', long_covid: false,
-    medical_conditions: '', injuries: '', surgeries: '', medications: '',
-    clinical_report: '', sports_history: '', current_training: '',
-    hrv_morning: '', spo2: '', morning_temperature: '', resting_heart_rate: '',
-    motivation_level: '', exercise_confidence: '', perceived_barriers: '',
-    social_support: '', dropout_history: '',
+  const [form, setForm] = useState(() => {
+    try { const s = localStorage.getItem('parq-form'); return s ? JSON.parse(s) : FORM_INITIAL; }
+    catch { return FORM_INITIAL; }
   });
 
+  // Guardar en localStorage en cada cambio
+  useEffect(() => { localStorage.setItem('parq-answers', JSON.stringify(parq)); }, [parq]);
+  useEffect(() => { localStorage.setItem('parq-form', JSON.stringify(form)); }, [form]);
+
+  // Cargar del servidor solo si NO hay datos locales guardados
   useEffect(() => {
     if (existing) {
-      setParq(existing.parq_answers || parq);
-      setForm({
-        parq_notes: existing.parq_notes || '',
-        pain_at_rest: existing.pain_at_rest ?? '',
-        pain_with_movement: existing.pain_with_movement ?? '',
-        dizziness_exertion: existing.dizziness_exertion || false,
-        palpitations: existing.palpitations || false,
-        family_heart_history: existing.family_heart_history || false,
-        cholesterol_known: existing.cholesterol_known ?? '',
-        triglycerides_known: existing.triglycerides_known ?? '',
-        blood_pressure_known: existing.blood_pressure_known ?? '',
-        fasting_glucose_known: existing.fasting_glucose_known ?? '',
-        covid_history: existing.covid_history || '',
-        long_covid: existing.long_covid || false,
-        medical_conditions: (existing.medical_conditions || []).join(', '),
-        injuries: (existing.injuries || []).join(', '),
-        surgeries: (existing.surgeries || []).join(', '),
-        medications: (existing.medications || []).join(', '),
-        clinical_report: existing.clinical_report || '',
-        sports_history: existing.sports_history || '',
-        current_training: existing.current_training || '',
-        hrv_morning: existing.hrv_morning ?? '',
-        spo2: existing.spo2 ?? '',
-        morning_temperature: existing.morning_temperature ?? '',
-        resting_heart_rate: existing.resting_heart_rate ?? '',
-        motivation_level: existing.motivation_level ?? '',
-        exercise_confidence: existing.exercise_confidence ?? '',
-        perceived_barriers: existing.perceived_barriers || '',
-        social_support: existing.social_support || '',
-        dropout_history: existing.dropout_history ?? '',
-      });
+      const savedParq = localStorage.getItem('parq-answers');
+      const savedForm = localStorage.getItem('parq-form');
+      if (!savedParq) {
+        setParq(existing.parq_answers || PARQ_INITIAL);
+      }
+      if (!savedForm) {
+        setForm({
+          parq_notes: existing.parq_notes || '',
+          pain_at_rest: existing.pain_at_rest ?? '',
+          pain_with_movement: existing.pain_with_movement ?? '',
+          dizziness_exertion: existing.dizziness_exertion || false,
+          palpitations: existing.palpitations || false,
+          family_heart_history: existing.family_heart_history || false,
+          cholesterol_known: existing.cholesterol_known ?? '',
+          triglycerides_known: existing.triglycerides_known ?? '',
+          blood_pressure_known: existing.blood_pressure_known ?? '',
+          fasting_glucose_known: existing.fasting_glucose_known ?? '',
+          covid_history: existing.covid_history || '',
+          long_covid: existing.long_covid || false,
+          medical_conditions: (existing.medical_conditions || []).join(', '),
+          injuries: (existing.injuries || []).join(', '),
+          surgeries: (existing.surgeries || []).join(', '),
+          medications: (existing.medications || []).join(', '),
+          clinical_report: existing.clinical_report || '',
+          sports_history: existing.sports_history || '',
+          current_training: existing.current_training || '',
+          hrv_morning: existing.hrv_morning ?? '',
+          spo2: existing.spo2 ?? '',
+          morning_temperature: existing.morning_temperature ?? '',
+          resting_heart_rate: existing.resting_heart_rate ?? '',
+          motivation_level: existing.motivation_level ?? '',
+          exercise_confidence: existing.exercise_confidence ?? '',
+          perceived_barriers: existing.perceived_barriers || '',
+          social_support: existing.social_support || '',
+          dropout_history: existing.dropout_history ?? '',
+        });
+      }
     }
   }, [existing]);
 
@@ -89,6 +111,9 @@ export default function PARQForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['health'] });
       toast({ title: 'Evaluación de salud guardada.' });
+      // Limpiar localStorage al guardar exitosamente
+      localStorage.removeItem('parq-answers');
+      localStorage.removeItem('parq-form');
     },
   });
 
@@ -271,7 +296,7 @@ export default function PARQForm() {
         </div>
         <div>
           <Label>Entrenamiento actual</Label>
-          <Textarea value={form.current_training} onChange={setInput('current_training')} placeholder="Qué hacés actualmente, frecuencia, intensidad..." className="mt-1" rows={3} />
+          <Textarea value={form.current_training} onChange={setInput('current_training')} placeholder="Que haces actualmente, frecuencia, intensidad..." className="mt-1" rows={3} />
         </div>
       </div>
 

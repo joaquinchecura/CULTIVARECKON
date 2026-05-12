@@ -126,6 +126,30 @@ function ScoreBadge({ score }) {
   );
 }
 
+const FORM_INITIAL = {
+  test_date: today,
+  chair_test_reps: '', chair_test_time_sec: '', chair_test_score: '',
+  pushup_reps: '', pushup_score: '',
+  deep_squat_depth: '', deep_squat_compensation: '', deep_squat_score: '',
+  balance_dominant_sec: '', balance_nondominant_sec: '', balance_score: '',
+  srt_score: '', srt_interpretation: '',
+  step_test_heart_rate: '', step_test_score: '',
+  vo2max_estimate: '',
+  apley_scratch: '', thomas_test: '', knee_to_wall_cm: '',
+  thoracic_rotation_deg: '', lumbar_extension_notes: '',
+  plank_sec: '', plank_score: '',
+  side_plank_left_sec: '', side_plank_right_sec: '',
+  bird_dog_reps: '', dead_bug_reps: '',
+  single_leg_glute_bridge_reps: '', y_balance_notes: '',
+  max_squat_reps: '', max_pullup_reps: '',
+  wall_sit_sec: '', plank_to_pushup_reps: '',
+  vertical_jump_cm: '', broad_jump_cm: '',
+  medball_throw_m: '', sprint_10m_sec: '', agility_5_10_5_sec: '',
+  cooper_distance_m: '', cooper_vo2max: '',
+  two_step_hr_recovery: '', rpe_3min_walk: '', talk_test_result: '',
+  notes: '',
+};
+
 export default function FitnessTestsForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -133,29 +157,14 @@ export default function FitnessTestsForm() {
 
   const profileId = profiles?.[0]?.id;
 
-  const [form, setForm] = useState({
-    test_date: today,
-    chair_test_reps: '', chair_test_time_sec: '', chair_test_score: '',
-    pushup_reps: '', pushup_score: '',
-    deep_squat_depth: '', deep_squat_compensation: '', deep_squat_score: '',
-    balance_dominant_sec: '', balance_nondominant_sec: '', balance_score: '',
-    srt_score: '', srt_interpretation: '',
-    step_test_heart_rate: '', step_test_score: '',
-    vo2max_estimate: '',
-    apley_scratch: '', thomas_test: '', knee_to_wall_cm: '',
-    thoracic_rotation_deg: '', lumbar_extension_notes: '',
-    plank_sec: '', plank_score: '',
-    side_plank_left_sec: '', side_plank_right_sec: '',
-    bird_dog_reps: '', dead_bug_reps: '',
-    single_leg_glute_bridge_reps: '', y_balance_notes: '',
-    max_squat_reps: '', max_pullup_reps: '',
-    wall_sit_sec: '', plank_to_pushup_reps: '',
-    vertical_jump_cm: '', broad_jump_cm: '',
-    medball_throw_m: '', sprint_10m_sec: '', agility_5_10_5_sec: '',
-    cooper_distance_m: '', cooper_vo2max: '',
-    two_step_hr_recovery: '', rpe_3min_walk: '', talk_test_result: '',
-    notes: '',
+  // Estado con persistencia en localStorage
+  const [form, setForm] = useState(() => {
+    try { const s = localStorage.getItem('fitness-tests-form'); return s ? JSON.parse(s) : FORM_INITIAL; }
+    catch { return FORM_INITIAL; }
   });
+
+  // Guardar en localStorage en cada cambio
+  useEffect(() => { localStorage.setItem('fitness-tests-form', JSON.stringify(form)); }, [form]);
 
   const setField = (key) => (val) => setForm(f => ({ ...f, [key]: val }));
   const setInput = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
@@ -174,6 +183,8 @@ export default function FitnessTestsForm() {
       queryClient.invalidateQueries({ queryKey: ['tests'] });
       localStorage.setItem('_reckon_sync', Date.now().toString());
       toast({ title: 'Tests guardados correctamente.' });
+      // Limpiar localStorage al guardar
+      localStorage.removeItem('fitness-tests-form');
     },
   });
 
