@@ -26,7 +26,7 @@ const steps = [
   {
     number: '03',
     title: 'Genera tu Plan',
-    description: 'La IA crea un plan personalizado de actividad física.',
+    description: 'El especialista te crea un plan personalizado de actividad física.',
     path: '/plan',
     icon: Dumbbell,
     entity: 'FitnessPlan',
@@ -67,7 +67,7 @@ export default function Home() {
           Tu plan de actividad física<br />personalizado por IA
         </h1>
         <p className="mt-3 text-muted-foreground max-w-lg">
-          Completa tus evaluaciones de salud y condición física. La inteligencia artificial RECKON generará un plan
+          Completa tus evaluaciones de salud y condición física. El especialista y la inteligencia artificial RECKON generará un plan
           profesional adaptado a tus necesidades, objetivos y condición actual.
         </p>
       </div>
