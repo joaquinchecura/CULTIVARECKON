@@ -33,9 +33,15 @@ export default function Evaluations() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="salud"><PARQForm /></TabsContent>
-        <TabsContent value="cuerpo"><MeasurementsForm /></TabsContent>
-        <TabsContent value="rendimiento"><FitnessTestsForm /></TabsContent>
+        <TabsContent value="salud" forceMount className="data-[state=inactive]:hidden">
+          <PARQForm />
+        </TabsContent>
+        <TabsContent value="cuerpo" forceMount className="data-[state=inactive]:hidden">
+          <MeasurementsForm />
+        </TabsContent>
+        <TabsContent value="rendimiento" forceMount className="data-[state=inactive]:hidden">
+          <FitnessTestsForm />
+        </TabsContent>
       </Tabs>
     </div>
   );
