@@ -271,7 +271,7 @@ export default function PARQForm() {
         </div>
         <div>
           <Label>Entrenamiento actual</Label>
-          <Textarea value={form.current_training} onChange={setInput('current_training')} placeholder="Qué hacés actualmente, frecuencia, intensidad..." className="mt-1" rows={3" />
+          <Textarea value={form.current_training} onChange={setInput('current_training')} placeholder="Qué hacés actualmente, frecuencia, intensidad..." className="mt-1" rows={3} />
         </div>
       </div>
 
