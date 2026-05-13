@@ -1,5 +1,4 @@
-
-component_code = '''import { format } from 'date-fns';
+import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Calendar, FileText, ArrowRight, Info, Clock, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,6 @@ function formatDate(d) {
 export default function NextEvaluation() {
   const navigate = useNavigate();
   
-  // Esto vendría de localStorage o del PDF generado previamente
   const lastEvaluationDate = localStorage.getItem('lastEvaluationDate');
   const hasPreviousEvaluation = !!lastEvaluationDate;
 
@@ -39,7 +37,6 @@ export default function NextEvaluation() {
         </p>
       </div>
 
-      {/* Estado actual */}
       <div className="step-card space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -78,7 +75,6 @@ export default function NextEvaluation() {
         )}
       </div>
 
-      {/* Cómo funciona */}
       <div className="step-card space-y-4">
         <div className="flex items-center gap-2 mb-2">
           <Info className="w-4 h-4 text-primary" />
@@ -97,9 +93,8 @@ export default function NextEvaluation() {
         </div>
       </div>
 
-      {/* Acción principal */}
       <Button 
-        onClick={() => navigate('/evaluacion')} 
+        onClick={() => navigate('/evaluaciones')} 
         className="w-full h-12 text-base gap-2"
       >
         {hasPreviousEvaluation ? (
@@ -115,7 +110,6 @@ export default function NextEvaluation() {
         )}
       </Button>
 
-      {/* Nota sobre comparación */}
       {hasPreviousEvaluation && (
         <div className="flex items-start gap-3 text-sm text-muted-foreground bg-secondary/30 rounded-lg p-4">
           <FileText className="w-4 h-4 mt-0.5 shrink-0" />
@@ -127,7 +121,6 @@ export default function NextEvaluation() {
         </div>
       )}
 
-      {/* Primera vez */}
       {!hasPreviousEvaluation && (
         <div className="flex items-start gap-3 text-sm text-muted-foreground bg-secondary/30 rounded-lg p-4">
           <Clock className="w-4 h-4 mt-0.5 shrink-0" />
