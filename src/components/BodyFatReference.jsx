@@ -1,27 +1,27 @@
 import { useState } from 'react';
 
 const MALE_REFS = [
-  { pct: 3, src: '/images/bodyfat/male3.jpeg', desc: '3% Essential fat (ciclistas de élite, culturistas en competencia)' },
-  { pct: 6, src: '/images/bodyfat/male6.jpeg', desc: 'Muy definido (abdominales visibles, vascularización)' },
-  { pct: 10, src: '/images/bodyfat/male10.jpeg', desc: 'Definido (abdominales marcados, poca grasa subcutánea)' },
-  { pct: 14, src: '/images/bodyfat/male14.jpeg', desc: 'Atlético (abdominales levemente visibles, hombros definidos)' },
-  { pct: 18, src: '/images/bodyfat/male18.jpeg', desc: 'Fitness (forma atlética, algo de definición)' },
-  { pct: 22, src: '/images/bodyfat/male22.jpeg', desc: 'Promedio saludable (poco definición, cintura visible)' },
-  { pct: 26, src: '/images/bodyfat/male26.jpeg', desc: 'Sobrepeso leve (grasa abdominal, cintura menos definida)' },
-  { pct: 32, src: '/images/bodyfat/male32.jpeg', desc: 'Sobrepeso (grasa abdominal notable, doble mentón leve)' },
-  { pct: 38, src: '/images/bodyfat/male38.jpeg', desc: 'Obesidad (grasa abundante en abdomen, espalda, cara)' },
+  { pct: 3, src: '/images/bodyfat/male3.jpeg', desc: '3% Grasa mínima (ciclistas de élite, culturistas en competencia)' },
+  { pct: 6, src: '/images/bodyfat/male6.jpeg', desc: '6% Muy definido (abdominales visibles, vascularización)' },
+  { pct: 10, src: '/images/bodyfat/male10.jpeg', desc: '10% Definido (abdominales marcados, poca grasa subcutánea)' },
+  { pct: 14, src: '/images/bodyfat/male14.jpeg', desc: '14% Atlético (abdominales levemente visibles, hombros definidos)' },
+  { pct: 18, src: '/images/bodyfat/male18.jpeg', desc: '18% Fitness (forma atlética, algo de definición)' },
+  { pct: 22, src: '/images/bodyfat/male22.jpeg', desc: '22% Promedio saludable (poco definición, cintura visible)' },
+  { pct: 26, src: '/images/bodyfat/male26.jpeg', desc: '26% Sobrepeso leve (grasa abdominal, cintura menos definida)' },
+  { pct: 32, src: '/images/bodyfat/male32.jpeg', desc: '32% Sobrepeso (grasa abdominal notable, doble mentón leve)' },
+  { pct: 38, src: '/images/bodyfat/male38.jpeg', desc: '38% Obesidad (grasa abundante en abdomen, espalda, cara)' },
 ];
 
 const FEMALE_REFS = [
-  { pct: 12, src: '/images/bodyfat/female12.jpeg', desc: 'Essential fat (atletas de élite, culturistas)' },
-  { pct: 16, src: '/images/bodyfat/female16.jpeg', desc: 'Muy definido (abdominales visibles, muy atlético)' },
-  { pct: 20, src: '/images/bodyfat/female20.jpeg', desc: 'Definido (abdomen plano, definición en brazos/piernas)' },
-  { pct: 24, src: '/images/bodyfat/female24.jpeg', desc: 'Atlético (forma tonificada, cintura definida)' },
-  { pct: 28, src: '/images/bodyfat/female28.jpeg', desc: 'Fitness (curvas suaves, algo de definición)' },
-  { pct: 32, src: '/images/bodyfat/female32.jpeg', desc: 'Promedio saludable (grasa suave, cintura promedio)' },
-  { pct: 36, src: '/images/bodyfat/female36.jpeg', desc: 'Sobrepeso leve (grasa en abdomen, caderas, brazos)' },
-  { pct: 42, src: '/images/bodyfat/female42.jpeg', desc: 'Sobrepeso (grasa abdominal notable, espalda ancha)' },
-  { pct: 48, src: '/images/bodyfat/female48.jpeg', desc: 'Obesidad (grasa abundante en todo el cuerpo)' },
+  { pct: 12, src: '/images/bodyfat/female12.jpeg', desc: '12% Grasa mínima (atletas de élite, culturistas)' },
+  { pct: 16, src: '/images/bodyfat/female16.jpeg', desc: '16% Muy definido (abdominales visibles, muy atlético)' },
+  { pct: 20, src: '/images/bodyfat/female20.jpeg', desc: '20% Definido (abdomen plano, definición en brazos/piernas)' },
+  { pct: 24, src: '/images/bodyfat/female24.jpeg', desc: '24% Atlético (forma tonificada, cintura definida)' },
+  { pct: 28, src: '/images/bodyfat/female28.jpeg', desc: '28% Fitness (curvas suaves, algo de definición)' },
+  { pct: 32, src: '/images/bodyfat/female32.jpeg', desc: '32% Promedio saludable (grasa suave, cintura promedio)' },
+  { pct: 36, src: '/images/bodyfat/female36.jpeg', desc: '36% Sobrepeso leve (grasa en abdomen, caderas, brazos)' },
+  { pct: 42, src: '/images/bodyfat/female42.jpeg', desc: '42% Sobrepeso (grasa abdominal notable, espalda ancha)' },
+  { pct: 48, src: '/images/bodyfat/female48.jpeg', desc: '48% Obesidad (grasa abundante en todo el cuerpo)' },
 ];
 
 export default function BodyFatReference({ gender, onSelect }) {
