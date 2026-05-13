@@ -1,4 +1,5 @@
-import { format } from 'date-fns';
+
+component_code = '''import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Calendar, FileText, ArrowRight, Info, Clock, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ function formatDate(d) {
 
 export default function NextEvaluation() {
   const navigate = useNavigate();
-
+  
   // Esto vendría de localStorage o del PDF generado previamente
   const lastEvaluationDate = localStorage.getItem('lastEvaluationDate');
   const hasPreviousEvaluation = !!lastEvaluationDate;
@@ -83,7 +84,7 @@ export default function NextEvaluation() {
           <Info className="w-4 h-4 text-primary" />
           <h3 className="font-semibold text-foreground">¿Cómo funciona el seguimiento?</h3>
         </div>
-
+        
         <div className="space-y-3">
           <Step number={1} title="Completá tu evaluación" 
                 text="Respondé las secciones de Cuerpo, Dieta y Rendimiento con tus datos actuales." />
