@@ -242,17 +242,17 @@ export default function FitnessTestsForm() {
 
       <TestSection title="2. Estabilidad y Control Motor" description="Core endurance, asimetrías y control lumbopélvico.">
         <div>
-          <Label>Plank (seg)</Label>
+          <Label>Plancha (seg)</Label>
           <Input type="number" value={form.plank_sec} onChange={setInput('plank_sec')} placeholder="60" className="mt-1" />
           <ScoreBadge score={form.plank_score} />
         </div>
         <div>
-          <Label>Side plank izquierdo (seg)</Label>
+          <Label>Plancha lateral izquierdo (seg)</Label>
           <Input type="number" value={form.side_plank_left_sec} onChange={setInput('side_plank_left_sec')} placeholder="45" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Asimetrías oblicuos</p>
         </div>
         <div>
-          <Label>Side plank derecho (seg)</Label>
+          <Label>Plancha lateral derecho (seg)</Label>
           <Input type="number" value={form.side_plank_right_sec} onChange={setInput('side_plank_right_sec')} placeholder="40" className="mt-1" />
         </div>
         <div>
@@ -266,7 +266,7 @@ export default function FitnessTestsForm() {
           <p className="text-xs text-muted-foreground mt-1">Estabilidad lumbar</p>
         </div>
         <div>
-          <Label>Single leg glute bridge (reps)</Label>
+          <Label>Puente de Glúteos con una sola pierna (reps)</Label>
           <Input type="number" value={form.single_leg_glute_bridge_reps} onChange={setInput('single_leg_glute_bridge_reps')} placeholder="12" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Fuerza + estabilidad cadera</p>
         </div>
@@ -283,28 +283,28 @@ export default function FitnessTestsForm() {
 
       <TestSection title="3. Fuerza Máxima Estimada (sin equipo)" description="Tests de resistencia muscular para estimar fuerza relativa.">
         <div>
-          <Label>Max rep push-up</Label>
+          <Label>Max reps push-up</Label>
           <Input type="number" value={form.pushup_reps} onChange={setInput('pushup_reps')} placeholder="20" className="mt-1" />
           <ScoreBadge score={form.pushup_score} />
           <p className="text-xs text-muted-foreground mt-1">Fuerza tren superior</p>
         </div>
         <div>
-          <Label>Max rep squat (bodyweight)</Label>
+          <Label>Max reps sentadilla (peso corporal)</Label>
           <Input type="number" value={form.max_squat_reps} onChange={setInput('max_squat_reps')} placeholder="30" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Fuerza tren inferior</p>
         </div>
         <div>
-          <Label>Max rep pull-up / inverted row</Label>
+          <Label>Max reps pull-up / remo invertido</Label>
           <Input type="number" value={form.max_pullup_reps} onChange={setInput('max_pullup_reps')} placeholder="8" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Fuerza de tracción</p>
         </div>
         <div>
-          <Label>Wall sit (seg máximo)</Label>
+          <Label>Sebtadilla contra pared (seg máximo)</Label>
           <Input type="number" value={form.wall_sit_sec} onChange={setInput('wall_sit_sec')} placeholder="90" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Isométrico cuádriceps</p>
         </div>
         <div>
-          <Label>Plank to push-up (reps)</Label>
+          <Label>Plancha + push-up (reps)</Label>
           <Input type="number" value={form.plank_to_pushup_reps} onChange={setInput('plank_to_pushup_reps')} placeholder="15" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Fuerza + estabilidad</p>
         </div>
@@ -316,27 +316,27 @@ export default function FitnessTestsForm() {
 
       <TestSection title="4. Potencia y Velocidad" description="Expresiones de potencia neuromuscular y capacidad de aceleración.">
         <div>
-          <Label>Vertical jump (cm)</Label>
+          <Label>Salto vertical (cm)</Label>
           <Input type="number" value={form.vertical_jump_cm} onChange={setInput('vertical_jump_cm')} placeholder="45" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Potencia tren inferior</p>
         </div>
         <div>
-          <Label>Broad jump (cm)</Label>
+          <Label>Salto horizontal (cm)</Label>
           <Input type="number" value={form.broad_jump_cm} onChange={setInput('broad_jump_cm')} placeholder="200" className="mt-1" />
-          <p className="text-xs text-muted-foreground mt-1">Potencia horizontal</p>
+          <p className="text-xs text-muted-foreground mt-1">Potencia inferior horizontal</p>
         </div>
         <div>
-          <Label>Medicine ball throw (m)</Label>
+          <Label>Lanzamiento de medicine ball (m)</Label>
           <Input type="number" step="0.1" value={form.medball_throw_m} onChange={setInput('medball_throw_m')} placeholder="5.5" className="mt-1" />
-          <p className="text-xs text-muted-foreground mt-1">Potencia tren superior (si tiene)</p>
+          <p className="text-xs text-muted-foreground mt-1">Potencia tren superior</p>
         </div>
         <div>
-          <Label>10m sprint (seg)</Label>
+          <Label>10m velocidad (seg)</Label>
           <Input type="number" step="0.01" value={form.sprint_10m_sec} onChange={setInput('sprint_10m_sec')} placeholder="2.10" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Velocidad aceleración</p>
         </div>
         <div>
-          <Label>5-10-5 agility (seg)</Label>
+          <Label>5-10-5 teste de agilidad (seg)</Label>
           <Input type="number" step="0.01" value={form.agility_5_10_5_sec} onChange={setInput('agility_5_10_5_sec')} placeholder="5.20" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Cambios de dirección</p>
         </div>
@@ -437,10 +437,10 @@ export default function FitnessTestsForm() {
         ]} />
       </TestSection>
 
-      <TestSection title="Test Sentarse-Levantarse (SRT)" description="Sentarse y levantarse del suelo sin apoyo de manos, rodillas ni codos. Puntuación del 0 al 10.">
+      <TestSection title="Test Sentarse-Levantarse (SRT)" description="Sentarse y levantarse del suelo sin apoyo de manos, rodillas ni codos. Puntuación del 0 al 10. Cada apoyo es un punto menos">
         <div>
           <Label>Puntuación (0–10)</Label>
-          <Input type="number" min="0" max="10" step="0.5" value={form.srt_score} onChange={setInput('srt_score')} placeholder="7.5" className="mt-1" />
+          <Input type="number" min="0" max="10" step="0.5" value={form.srt_score} onChange={setInput('srt_score')} placeholder="8" className="mt-1" />
         </div>
         <div className="col-span-2">
           <Label>Interpretación / observaciones</Label>

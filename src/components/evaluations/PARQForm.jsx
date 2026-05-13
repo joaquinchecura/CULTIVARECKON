@@ -204,7 +204,7 @@ export default function PARQForm() {
           <div>
             <Label>Dolor en reposo (0-10)</Label>
             <Input type="number" min="0" max="10" value={form.pain_at_rest} onChange={setInput('pain_at_rest')} placeholder="0 = sin dolor" className="mt-1" />
-            <p className="text-xs text-muted-foreground mt-1">Baseline de dolor general</p>
+            <p className="text-xs text-muted-foreground mt-1">Linea base de dolor general</p>
           </div>
           <div>
             <Label>Dolor con movimiento</Label>

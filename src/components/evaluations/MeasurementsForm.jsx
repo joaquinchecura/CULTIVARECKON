@@ -172,7 +172,7 @@ export default function MeasurementsForm() {
           <Field label="Cuello" value={form.neck_cm} onChange={set('neck_cm')} placeholder="38" />
           <Field label="Brazo" value={form.arm_cm} onChange={set('arm_cm')} placeholder="30" />
           <Field label="Muslo" value={form.thigh_cm} onChange={set('thigh_cm')} placeholder="55" />
-          <Field label="Pantorrilla" value={form.calf_cm} onChange={set('calf_cm')} placeholder="38" hint="Nuevo: cambios zonales" />
+          <Field label="Pantorrilla" value={form.calf_cm} onChange={set('calf_cm')} placeholder="38" />
         </div>
       </div>
 
