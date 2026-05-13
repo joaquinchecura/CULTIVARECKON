@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const MALE_REFS = [
-  { pct: 3, src: '/images/bodyfat/male3.jpeg', desc: 'Essential fat (ciclistas de élite, culturistas en competencia)' },
+  { pct: 3, src: '/images/bodyfat/male3.jpeg', desc: '3% Essential fat (ciclistas de élite, culturistas en competencia)' },
   { pct: 6, src: '/images/bodyfat/male6.jpeg', desc: 'Muy definido (abdominales visibles, vascularización)' },
   { pct: 10, src: '/images/bodyfat/male10.jpeg', desc: 'Definido (abdominales marcados, poca grasa subcutánea)' },
   { pct: 14, src: '/images/bodyfat/male14.jpeg', desc: 'Atlético (abdominales levemente visibles, hombros definidos)' },
