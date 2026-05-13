@@ -11,7 +11,7 @@ import Profile from './pages/Profile';
 import Evaluations from './pages/Evaluations';
 import Plan from './pages/Plan';
 // ✅ Corregido: import default (sin llaves) y nombre exacto del archivo
-import NextEvaluation from './pages/Nextevaluation';
+import NextEvaluation from './pages/NextEvaluation';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -41,7 +41,7 @@ const AuthenticatedApp = () => {
         <Route path="/evaluaciones" element={<Evaluations />} />
         <Route path="/plan" element={<Plan />} />
         {/* ✅ Usamos el nuevo componente */}
-        <Route path="/historial" element={<Nextevaluation />} />
+        <Route path="/historial" element={<NextEvaluation />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
