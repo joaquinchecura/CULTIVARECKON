@@ -10,7 +10,8 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Evaluations from './pages/Evaluations';
 import Plan from './pages/Plan';
-import History from './pages/NextEvaluation';
+// ✅ Corregido: import default (sin llaves) y nombre exacto del archivo
+import NextEvaluation from './pages/Nextevaluation';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -39,7 +40,8 @@ const AuthenticatedApp = () => {
         <Route path="/perfil" element={<Profile />} />
         <Route path="/evaluaciones" element={<Evaluations />} />
         <Route path="/plan" element={<Plan />} />
-        <Route path="/historial" element={<History />} />
+        {/* ✅ Usamos el nuevo componente */}
+        <Route path="/historial" element={<Nextevaluation />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
