@@ -10,7 +10,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Evaluations from './pages/Evaluations';
 import Plan from './pages/Plan';
-import History from './pages/History';
+import History from './pages/NextEvaluation';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();

@@ -5,7 +5,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Save, Upload, Apple, Droplets } from 'lucide-react';
+import { Save, Upload, Apple, Droplets, Wine, Clock, Utensils, Leaf, AlertTriangle, Pill, Coffee, Cookie } from 'lucide-react';
 
 const today = new Date().toISOString().split('T')[0];
 
@@ -18,8 +18,14 @@ const FORM_INITIAL = {
   notes: '',
   skinfold_chest_mm: '', skinfold_abdominal_mm: '', skinfold_thigh_mm: '',
   morning_weight_trend: '',
+  // Nutrición e hidratación
   water_intake_liters: '', protein_intake_g: '', vegetables_per_day: '',
   processed_meals_per_week: '', intermittent_fasting: false, fasting_schedule: '',
+  // NUEVOS CAMPOS DE DIETA
+  meal_frequency: '', diet_type: '', food_allergies: '', supplements: '',
+  alcohol_frequency: '', sugar_intake: '', eating_out_frequency: '',
+  fruits_per_day: '', fish_frequency: '', caffeine_cups: '', snacking_habit: false,
+  last_meal_time: '', meal_planner: '',
 };
 
 const Field = ({ label, value, onChange, placeholder, unit, hint, type = 'number' }) => (
@@ -27,6 +33,26 @@ const Field = ({ label, value, onChange, placeholder, unit, hint, type = 'number
     <Label className="flex items-center gap-1">{label} {unit && <span className="text-xs text-muted-foreground">({unit})</span>}</Label>
     {hint && <p className="text-xs text-muted-foreground mb-1">{hint}</p>}
     <Input type={type} step={type === 'number' ? '0.1' : undefined} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="mt-1" />
+  </div>
+);
+
+const SelectField = ({ label, value, onChange, options, hint, icon: Icon }) => (
+  <div>
+    <Label className="flex items-center gap-1.5">
+      {Icon && <Icon className="w-3.5 h-3.5 text-muted-foreground" />}
+      {label}
+    </Label>
+    {hint && <p className="text-xs text-muted-foreground mb-1">{hint}</p>}
+    <select 
+      value={value} 
+      onChange={e => onChange(e.target.value)} 
+      className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    >
+      <option value="">Seleccionar...</option>
+      {options.map(opt => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
   </div>
 );
 
@@ -39,13 +65,11 @@ export default function MeasurementsForm() {
   const latest = assessments?.[0];
   const profileId = profiles?.[0]?.id;
 
-  // Estado con persistencia en localStorage
   const [form, setForm] = useState(() => {
     try { const s = localStorage.getItem('measurements-form'); return s ? JSON.parse(s) : FORM_INITIAL; }
     catch { return FORM_INITIAL; }
   });
 
-  // Guardar en localStorage en cada cambio
   useEffect(() => { localStorage.setItem('measurements-form', JSON.stringify(form)); }, [form]);
 
   const [photoFiles, setPhotoFiles] = useState({ front: null, back: null, side: null, face: null });
@@ -69,7 +93,6 @@ export default function MeasurementsForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assessments'] });
       toast({ title: 'Mediciones y nutrición guardadas.' });
-      // Limpiar localStorage al guardar
       localStorage.removeItem('measurements-form');
     },
   });
@@ -121,6 +144,20 @@ export default function MeasurementsForm() {
       processed_meals_per_week: toNum(form.processed_meals_per_week),
       intermittent_fasting: form.intermittent_fasting,
       fasting_schedule: form.fasting_schedule,
+      // NUEVOS CAMPOS
+      meal_frequency: form.meal_frequency,
+      diet_type: form.diet_type,
+      food_allergies: form.food_allergies,
+      supplements: form.supplements,
+      alcohol_frequency: form.alcohol_frequency,
+      sugar_intake: form.sugar_intake,
+      eating_out_frequency: form.eating_out_frequency,
+      fruits_per_day: toNum(form.fruits_per_day),
+      fish_frequency: form.fish_frequency,
+      caffeine_cups: toNum(form.caffeine_cups),
+      snacking_habit: form.snacking_habit,
+      last_meal_time: form.last_meal_time,
+      meal_planner: form.meal_planner,
       imc: imc ? Number(imc) : undefined,
       waist_hip_ratio: whr ? Number(whr) : undefined,
       chronological_age: chronAge,
@@ -133,6 +170,9 @@ export default function MeasurementsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* ... SECCIONES ANTERIORES IGUALES (Medidas, Circunferencias, Longitudes, BIA, Somatotipo, Fotos) ... */}
+      
+      {/* Fecha, IMC, ICC */}
       <div className="step-card">
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
@@ -156,6 +196,7 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
+      {/* Medidas Básicas */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Medidas Básicas</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -164,6 +205,7 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
+      {/* Circunferencias */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Circunferencias (cm)</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -176,9 +218,10 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
+      {/* Longitudes Óseas */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Longitudes Óseas (cm)</h2>
-        <p className="text-sm text-muted-foreground">Medición de los huesos principales de las extremidades para somatocarta y análisis estructural.</p>
+        <p className="text-sm text-muted-foreground">Medición de los huesos principales para somatocarta y análisis estructural.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="Fémur" value={form.femur_cm} onChange={set('femur_cm')} placeholder="42" hint="Trocánter mayor a rodilla" />
           <Field label="Tibia" value={form.tibia_cm} onChange={set('tibia_cm')} placeholder="36" hint="Rodilla a maléolo" />
@@ -186,6 +229,7 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
+      {/* Bioimpedancia */}
       <div className="step-card space-y-4">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-foreground">Bioimpedancia (BIA)</h2>
@@ -200,6 +244,7 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
+      {/* Somatotipo */}
       <div className="step-card space-y-4">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-foreground">Somatotipo / Somatocarta</h2>
@@ -212,6 +257,7 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
+      {/* Composición Corporal Casera */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Composición Corporal Casera</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -234,6 +280,7 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
+      {/* Fotos de Evolución */}
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Fotos de Evolución</h2>
         <p className="text-sm text-muted-foreground">Las fotos periódicas permiten visualizar cambios en composición corporal.</p>
@@ -257,48 +304,224 @@ export default function MeasurementsForm() {
         </div>
       </div>
 
-      <div className="step-card space-y-4">
-        <h2 className="font-semibold text-foreground flex items-center gap-2">
-          <Apple className="w-4 h-4 text-primary" />
-          Nutrición e Hidratación
-        </h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <Droplets className="w-4 h-4 text-blue-500" />
-            <div className="flex-1">
-              <Label>Ingesta de agua (litros/día)</Label>
-              <Input type="number" step="0.1" value={form.water_intake_liters} onChange={setInput('water_intake_liters')} placeholder="2.5" className="mt-1" />
-              <p className="text-xs text-muted-foreground mt-1">Hidratación</p>
+      {/* ═══════════════════════════════════════════════════════
+          NUEVA SECCIÓN: DIETA COMPLETA
+          ═══════════════════════════════════════════════════════ */}
+      <div className="step-card space-y-6">
+        <div className="flex items-center gap-2 border-b border-border pb-3">
+          <Apple className="w-5 h-5 text-primary" />
+          <h2 className="font-semibold text-foreground text-lg">Evaluación Nutricional Completa</h2>
+        </div>
+
+        {/* Hidratación y Macronutrientes Básicos */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Hidratación y Macronutrientes</h3>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="flex items-start gap-2">
+              <Droplets className="w-4 h-4 text-blue-500 mt-1" />
+              <div className="flex-1">
+                <Field label="Ingesta de agua" unit="litros/día" value={form.water_intake_liters} onChange={set('water_intake_liters')} placeholder="2.5" />
+              </div>
+            </div>
+            <div>
+              <Field label="Proteína estimada" unit="g/día" value={form.protein_intake_g} onChange={set('protein_intake_g')} placeholder="120" />
             </div>
           </div>
-          <div>
-            <Label>Ingesta de proteína estimada (g/día)</Label>
-            <Input type="number" value={form.protein_intake_g} onChange={setInput('protein_intake_g')} placeholder="120" className="mt-1" />
-            <p className="text-xs text-muted-foreground mt-1">Síntesis muscular</p>
+        </div>
+
+        {/* Frecuencia y Estructura de Comidas */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Estructura Alimentaria</h3>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <SelectField 
+              label="Frecuencia de comidas" 
+              icon={Utensils}
+              value={form.meal_frequency} 
+              onChange={set('meal_frequency')}
+              options={[
+                { value: '2', label: '2 o menos comidas' },
+                { value: '3', label: '3 comidas principales' },
+                { value: '4', label: '4 comidas (colación incluida)' },
+                { value: '5', label: '5 o más comidas' },
+              ]}
+            />
+            <SelectField 
+              label="Tipo de alimentación" 
+              icon={Leaf}
+              value={form.diet_type} 
+              onChange={set('diet_type')}
+              options={[
+                { value: 'omnivore', label: 'Omnívoro (sin restricciones)' },
+                { value: 'vegetarian', label: 'Vegetariano' },
+                { value: 'vegan', label: 'Vegano' },
+                { value: 'pescatarian', label: 'Pescetariano' },
+                { value: 'keto', label: 'Keto / Low Carb' },
+                { value: 'celiac', label: 'Celíaco (sin TACC)' },
+                { value: 'other', label: 'Otra / Específica' },
+              ]}
+            />
+            <div className="sm:col-span-2">
+              <Label className="flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                Alergias o intolerancias alimentarias
+              </Label>
+              <Input 
+                value={form.food_allergies} 
+                onChange={setInput('food_allergies')} 
+                placeholder="Ej: lactosa, frutos secos, gluten, mariscos, huevo..." 
+                className="mt-1" 
+              />
+            </div>
           </div>
-          <div>
-            <Label>Porciones de verduras por día</Label>
-            <Input type="number" value={form.vegetables_per_day} onChange={setInput('vegetables_per_day')} placeholder="3" className="mt-1" />
-            <p className="text-xs text-muted-foreground mt-1">Micronutrientes</p>
+        </div>
+
+        {/* Calidad de la Dieta */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Calidad y Comportamiento Alimentario</h3>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <SelectField 
+              label="Frecuencia de alcohol" 
+              icon={Wine}
+              value={form.alcohol_frequency} 
+              onChange={set('alcohol_frequency')}
+              options={[
+                { value: 'never', label: 'Nunca' },
+                { value: 'monthly', label: '1-2 veces por mes' },
+                { value: 'weekly', label: '1-2 veces por semana' },
+                { value: 'frequently', label: '3+ veces por semana' },
+              ]}
+            />
+            <SelectField 
+              label="Consumo de azúcar/agregados" 
+              icon={Cookie}
+              value={form.sugar_intake} 
+              onChange={set('sugar_intake')}
+              options={[
+                { value: 'never', label: 'Nunca / Casi nunca' },
+                { value: 'weekly', label: '1-2 veces por semana' },
+                { value: 'frequently', label: '3-5 veces por semana' },
+                { value: 'daily', label: 'Todos los días' },
+              ]}
+            />
+            <SelectField 
+              label="Comidas fuera de casa / delivery" 
+              icon={Utensils}
+              value={form.eating_out_frequency} 
+              onChange={set('eating_out_frequency')}
+              options={[
+                { value: 'never', label: 'Nunca' },
+                { value: 'weekly', label: '1-2 veces por semana' },
+                { value: 'frequently', label: '3-5 veces por semana' },
+                { value: 'daily', label: 'Todos los días' },
+              ]}
+            />
+            <Field label="Comidas procesadas por semana" value={form.processed_meals_per_week} onChange={set('processed_meals_per_week')} placeholder="5" />
+            <Field label="Porciones de verduras por día" value={form.vegetables_per_day} onChange={set('vegetables_per_day')} placeholder="3" />
+            <Field label="Porciones de frutas por día" value={form.fruits_per_day} onChange={set('fruits_per_day')} placeholder="2" />
+            <SelectField 
+              label="Frecuencia de consumo de pescado" 
+              value={form.fish_frequency} 
+              onChange={set('fish_frequency')}
+              options={[
+                { value: 'never', label: 'Nunca' },
+                { value: 'monthly', label: '1-3 veces por mes' },
+                { value: 'weekly', label: '1-2 veces por semana' },
+                { value: 'frequently', label: '3+ veces por semana' },
+              ]}
+            />
+            <div className="flex items-start gap-2">
+              <Coffee className="w-4 h-4 text-amber-700 mt-1" />
+              <div className="flex-1">
+                <Field label="Tazas de café/cafeína por día" value={form.caffeine_cups} onChange={set('caffeine_cups')} placeholder="2" />
+              </div>
+            </div>
           </div>
-          <div>
-            <Label>Comidas procesadas por semana</Label>
-            <Input type="number" value={form.processed_meals_per_week} onChange={setInput('processed_meals_per_week')} placeholder="5" className="mt-1" />
-            <p className="text-xs text-muted-foreground mt-1">Calidad de la dieta</p>
+        </div>
+
+        {/* Timing y Ayuno */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Timing y Organización</h3>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <SelectField 
+              label="Horario de última comida" 
+              icon={Clock}
+              value={form.last_meal_time} 
+              onChange={set('last_meal_time')}
+              options={[
+                { value: 'before_18', label: 'Antes de las 18:00' },
+                { value: '18_20', label: '18:00 - 20:00' },
+                { value: '20_22', label: '20:00 - 22:00' },
+                { value: 'after_22', label: 'Después de las 22:00' },
+              ]}
+            />
+            <SelectField 
+              label="¿Quién planifica/cocina?" 
+              value={form.meal_planner} 
+              onChange={set('meal_planner')}
+              options={[
+                { value: 'self', label: 'Yo mismo/a' },
+                { value: 'family', label: 'Familiar / Pareja' },
+                { value: 'meal_prep', label: 'Viandas / Meal prep' },
+                { value: 'mixed', label: 'Mixto' },
+              ]}
+            />
+            <div className="sm:col-span-2 flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
+              <input 
+                type="checkbox" 
+                id="intermittent_fasting" 
+                checked={form.intermittent_fasting} 
+                onChange={e => set('intermittent_fasting')(e.target.checked)} 
+                className="mt-1 rounded border-border" 
+              />
+              <div className="flex-1">
+                <label htmlFor="intermittent_fasting" className="text-sm font-medium text-foreground">Practico ayuno intermitente</label>
+                <p className="text-xs text-muted-foreground">Timing nutricional</p>
+                {form.intermittent_fasting && (
+                  <Input 
+                    value={form.fasting_schedule} 
+                    onChange={setInput('fasting_schedule')} 
+                    placeholder="Ej: 16:8 (ayuno 16h, ventana 8h)" 
+                    className="mt-2 max-w-xs" 
+                  />
+                )}
+              </div>
+            </div>
+            <div className="sm:col-span-2 flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
+              <input 
+                type="checkbox" 
+                id="snacking_habit" 
+                checked={form.snacking_habit} 
+                onChange={e => set('snacking_habit')(e.target.checked)} 
+                className="mt-1 rounded border-border" 
+              />
+              <div>
+                <label htmlFor="snacking_habit" className="text-sm font-medium text-foreground">Hábito de picoteo entre comidas</label>
+                <p className="text-xs text-muted-foreground">Snacking no planificado</p>
+              </div>
+            </div>
           </div>
-          <div className="sm:col-span-2 flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
-            <input type="checkbox" id="intermittent_fasting" checked={form.intermittent_fasting} onChange={e => set('intermittent_fasting')(e.target.checked)} className="mt-1 rounded border-border" />
-            <div>
-              <label htmlFor="intermittent_fasting" className="text-sm font-medium text-foreground">Practico ayuno intermitente</label>
-              <p className="text-xs text-muted-foreground">Timing nutricional</p>
-              {form.intermittent_fasting && (
-                <Input value={form.fasting_schedule} onChange={setInput('fasting_schedule')} placeholder="Ej: 16:8 (ayuno 16h, ventana 8h)" className="mt-2 max-w-xs" />
-              )}
+        </div>
+
+        {/* Suplementación */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Suplementación</h3>
+          <div className="flex items-start gap-2">
+            <Pill className="w-4 h-4 text-purple-500 mt-1" />
+            <div className="flex-1">
+              <Label>Suplementos actuales</Label>
+              <Input 
+                value={form.supplements} 
+                onChange={setInput('supplements')} 
+                placeholder="Ej: proteína whey, creatina, omega-3, multivitamínico, vitamina D..." 
+                className="mt-1" 
+              />
+              <p className="text-xs text-muted-foreground mt-1">Listá todos los suplementos que consumís actualmente con sus dosis</p>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Notas generales */}
       <div className="step-card">
         <Label>Notas generales</Label>
         <Input value={form.notes} onChange={setInput('notes')} placeholder="Observaciones adicionales..." className="mt-1" />
@@ -306,7 +529,7 @@ export default function MeasurementsForm() {
 
       <Button type="submit" disabled={saveMutation.isPending || uploading} className="w-full sm:w-auto">
         <Save className="w-4 h-4 mr-2" />
-        {uploading ? 'Subiendo fotos...' : saveMutation.isPending ? 'Guardando...' : 'Guardar Mediciones y Nutrición'}
+        {uploading ? 'Subiendo fotos...' : saveMutation.isPending ? 'Guardando...' : 'Guardar Evaluación Completa'}
       </Button>
     </form>
   );
