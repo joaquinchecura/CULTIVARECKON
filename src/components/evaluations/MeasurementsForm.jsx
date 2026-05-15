@@ -65,12 +65,72 @@ export default function MeasurementsForm() {
   const latest = assessments?.[0];
   const profileId = profiles?.[0]?.id;
 
+  // Estado con persistencia en localStorage
   const [form, setForm] = useState(() => {
     try { const s = localStorage.getItem('measurements-form'); return s ? JSON.parse(s) : FORM_INITIAL; }
     catch { return FORM_INITIAL; }
   });
 
+  // Guardar en localStorage en cada cambio
   useEffect(() => { localStorage.setItem('measurements-form', JSON.stringify(form)); }, [form]);
+
+  // ============================================================
+  // CARGAR DATOS DEL SERVIDOR SI NO HAY LOCALSTORAGE
+  // ============================================================
+  useEffect(() => {
+    if (latest) {
+      const saved = localStorage.getItem('measurements-form');
+      if (!saved) {
+        setForm({
+          assessment_date: latest.assessment_date || today,
+          weight_kg: latest.weight_kg ?? '',
+          height_cm: latest.height_cm ?? '',
+          waist_cm: latest.waist_cm ?? '',
+          hip_cm: latest.hip_cm ?? '',
+          neck_cm: latest.neck_cm ?? '',
+          arm_cm: latest.arm_cm ?? '',
+          thigh_cm: latest.thigh_cm ?? '',
+          calf_cm: latest.calf_cm ?? '',
+          femur_cm: latest.femur_cm ?? '',
+          tibia_cm: latest.tibia_cm ?? '',
+          humerus_cm: latest.humerus_cm ?? '',
+          body_fat_pct: latest.body_fat_pct ?? '',
+          muscle_mass_kg: latest.muscle_mass_kg ?? '',
+          visceral_fat: latest.visceral_fat ?? '',
+          bone_mass_kg: latest.bone_mass_kg ?? '',
+          metabolic_age: latest.metabolic_age ?? '',
+          somatotype_endomorphy: latest.somatotype_endomorphy ?? '',
+          somatotype_mesomorphy: latest.somatotype_mesomorphy ?? '',
+          somatotype_ectomorphy: latest.somatotype_ectomorphy ?? '',
+          notes: latest.notes ?? '',
+          skinfold_chest_mm: latest.skinfold_chest_mm ?? '',
+          skinfold_abdominal_mm: latest.skinfold_abdominal_mm ?? '',
+          skinfold_thigh_mm: latest.skinfold_thigh_mm ?? '',
+          morning_weight_trend: latest.morning_weight_trend ?? '',
+          water_intake_liters: latest.water_intake_liters ?? '',
+          protein_intake_g: latest.protein_intake_g ?? '',
+          vegetables_per_day: latest.vegetables_per_day ?? '',
+          processed_meals_per_week: latest.processed_meals_per_week ?? '',
+          intermittent_fasting: latest.intermittent_fasting || false,
+          fasting_schedule: latest.fasting_schedule ?? '',
+          // NUEVOS CAMPOS DE DIETA
+          meal_frequency: latest.meal_frequency ?? '',
+          diet_type: latest.diet_type ?? '',
+          food_allergies: latest.food_allergies ?? '',
+          supplements: latest.supplements ?? '',
+          alcohol_frequency: latest.alcohol_frequency ?? '',
+          sugar_intake: latest.sugar_intake ?? '',
+          eating_out_frequency: latest.eating_out_frequency ?? '',
+          fruits_per_day: latest.fruits_per_day ?? '',
+          fish_frequency: latest.fish_frequency ?? '',
+          caffeine_cups: latest.caffeine_cups ?? '',
+          snacking_habit: latest.snacking_habit || false,
+          last_meal_time: latest.last_meal_time ?? '',
+          meal_planner: latest.meal_planner ?? '',
+        });
+      }
+    }
+  }, [latest]);
 
   const [photoFiles, setPhotoFiles] = useState({ front: null, back: null, side: null, face: null });
   const [uploading, setUploading] = useState(false);
@@ -170,8 +230,6 @@ export default function MeasurementsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* ... SECCIONES ANTERIORES IGUALES (Medidas, Circunferencias, Longitudes, BIA, Somatotipo, Fotos) ... */}
-      
       {/* Fecha, IMC, ICC */}
       <div className="step-card">
         <div className="grid sm:grid-cols-2 gap-4">
@@ -305,7 +363,7 @@ export default function MeasurementsForm() {
       </div>
 
       {/* ═══════════════════════════════════════════════════════
-          NUEVA SECCIÓN: DIETA COMPLETA
+          SECCIÓN: DIETA COMPLETA
           ═══════════════════════════════════════════════════════ */}
       <div className="step-card space-y-6">
         <div className="flex items-center gap-2 border-b border-border pb-3">

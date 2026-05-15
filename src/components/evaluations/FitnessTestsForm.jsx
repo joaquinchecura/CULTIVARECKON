@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { entities } from '@/api/entities';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -155,6 +155,16 @@ export default function FitnessTestsForm() {
   const queryClient = useQueryClient();
   const { data: profiles } = useReckonQuery('profiles', () => entities.UserProfile.list());
 
+  // ============================================================
+  // AGREGADO: Query para cargar tests del servidor
+  // ============================================================
+  const { data: tests } = useQuery({ 
+    queryKey: ['tests'], 
+    queryFn: () => entities.FitnessTest.list('-test_date', 1) 
+  });
+
+  const latestTest = tests?.[0];
+
   const profileId = profiles?.[0]?.id;
 
   // Estado con persistencia en localStorage
@@ -165,6 +175,64 @@ export default function FitnessTestsForm() {
 
   // Guardar en localStorage en cada cambio
   useEffect(() => { localStorage.setItem('fitness-tests-form', JSON.stringify(form)); }, [form]);
+
+  // ============================================================
+  // AGREGADO: CARGAR DATOS DEL SERVIDOR SI NO HAY LOCALSTORAGE
+  // ============================================================
+  useEffect(() => {
+    if (latestTest) {
+      const saved = localStorage.getItem('fitness-tests-form');
+      if (!saved) {
+        setForm({
+          test_date: latestTest.test_date || today,
+          chair_test_reps: latestTest.chair_test_reps ?? '',
+          chair_test_time_sec: latestTest.chair_test_time_sec ?? '',
+          chair_test_score: latestTest.chair_test_score ?? '',
+          pushup_reps: latestTest.pushup_reps ?? '',
+          pushup_score: latestTest.pushup_score ?? '',
+          deep_squat_depth: latestTest.deep_squat_depth ?? '',
+          deep_squat_compensation: latestTest.deep_squat_compensation ?? '',
+          deep_squat_score: latestTest.deep_squat_score ?? '',
+          balance_dominant_sec: latestTest.balance_dominant_sec ?? '',
+          balance_nondominant_sec: latestTest.balance_nondominant_sec ?? '',
+          balance_score: latestTest.balance_score ?? '',
+          srt_score: latestTest.srt_score ?? '',
+          srt_interpretation: latestTest.srt_interpretation ?? '',
+          step_test_heart_rate: latestTest.step_test_heart_rate ?? '',
+          step_test_score: latestTest.step_test_score ?? '',
+          vo2max_estimate: latestTest.vo2max_estimate ?? '',
+          apley_scratch: latestTest.apley_scratch ?? '',
+          thomas_test: latestTest.thomas_test ?? '',
+          knee_to_wall_cm: latestTest.knee_to_wall_cm ?? '',
+          thoracic_rotation_deg: latestTest.thoracic_rotation_deg ?? '',
+          lumbar_extension_notes: latestTest.lumbar_extension_notes ?? '',
+          plank_sec: latestTest.plank_sec ?? '',
+          plank_score: latestTest.plank_score ?? '',
+          side_plank_left_sec: latestTest.side_plank_left_sec ?? '',
+          side_plank_right_sec: latestTest.side_plank_right_sec ?? '',
+          bird_dog_reps: latestTest.bird_dog_reps ?? '',
+          dead_bug_reps: latestTest.dead_bug_reps ?? '',
+          single_leg_glute_bridge_reps: latestTest.single_leg_glute_bridge_reps ?? '',
+          y_balance_notes: latestTest.y_balance_notes ?? '',
+          max_squat_reps: latestTest.max_squat_reps ?? '',
+          max_pullup_reps: latestTest.max_pullup_reps ?? '',
+          wall_sit_sec: latestTest.wall_sit_sec ?? '',
+          plank_to_pushup_reps: latestTest.plank_to_pushup_reps ?? '',
+          vertical_jump_cm: latestTest.vertical_jump_cm ?? '',
+          broad_jump_cm: latestTest.broad_jump_cm ?? '',
+          medball_throw_m: latestTest.medball_throw_m ?? '',
+          sprint_10m_sec: latestTest.sprint_10m_sec ?? '',
+          agility_5_10_5_sec: latestTest.agility_5_10_5_sec ?? '',
+          cooper_distance_m: latestTest.cooper_distance_m ?? '',
+          cooper_vo2max: latestTest.cooper_vo2max ?? '',
+          two_step_hr_recovery: latestTest.two_step_hr_recovery ?? '',
+          rpe_3min_walk: latestTest.rpe_3min_walk ?? '',
+          talk_test_result: latestTest.talk_test_result ?? '',
+          notes: latestTest.notes ?? '',
+        });
+      }
+    }
+  }, [latestTest]);
 
   const setField = (key) => (val) => setForm(f => ({ ...f, [key]: val }));
   const setInput = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
@@ -183,7 +251,6 @@ export default function FitnessTestsForm() {
       queryClient.invalidateQueries({ queryKey: ['tests'] });
       localStorage.setItem('_reckon_sync', Date.now().toString());
       toast({ title: 'Tests guardados correctamente.' });
-      // Limpiar localStorage al guardar
       localStorage.removeItem('fitness-tests-form');
     },
   });
@@ -299,7 +366,7 @@ export default function FitnessTestsForm() {
           <p className="text-xs text-muted-foreground mt-1">Fuerza de tracción</p>
         </div>
         <div>
-          <Label>Sebtadilla contra pared (seg máximo)</Label>
+          <Label>Sentadilla contra pared (seg máximo)</Label>
           <Input type="number" value={form.wall_sit_sec} onChange={setInput('wall_sit_sec')} placeholder="90" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Isométrico cuádriceps</p>
         </div>
@@ -336,7 +403,7 @@ export default function FitnessTestsForm() {
           <p className="text-xs text-muted-foreground mt-1">Velocidad aceleración</p>
         </div>
         <div>
-          <Label>5-10-5 teste de agilidad (seg)</Label>
+          <Label>5-10-5 test de agilidad (seg)</Label>
           <Input type="number" step="0.01" value={form.agility_5_10_5_sec} onChange={setInput('agility_5_10_5_sec')} placeholder="5.20" className="mt-1" />
           <p className="text-xs text-muted-foreground mt-1">Cambios de dirección</p>
         </div>

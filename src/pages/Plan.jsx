@@ -83,6 +83,7 @@ export default function Plan() {
 
     line(`Tipo de cuerpo: ${fmt(profile.body_type)} | Postura: ${fmt(profile.posture)} | Flexibilidad: ${fmt(profile.flexibility_level, '/10')}`, 10);
     line(`% Grasa estimado: ${fmt(profile.body_fat_pct_estimate, '%')} | Masa magra calc: ${profile.weight_kg && profile.body_fat_pct_estimate ? (Number(profile.weight_kg) * (1 - Number(profile.body_fat_pct_estimate) / 100)).toFixed(1) + ' kg' : 'N/D'}`, 10);
+    line(`Masa muscular estimada: ${fmt(profile.muscle_mass_kg_estimate, ' kg')} | Preferencia de entrenamiento: ${fmt(profile.training_location_pref)}`, 10);
     line(`Circunferencia cuello: ${fmt(profile.neck_circumference_cm, ' cm')} | Muñeca: ${fmt(profile.wrist_circumference_cm, ' cm')}`, 10);
     line(`Dolor crónico: ${fmt(profile.chronic_pain_areas)}`, 10);
     y += 2;
@@ -106,6 +107,7 @@ export default function Plan() {
     const parq = health.parq_answers || {};
     const anyYes = Object.values(parq).some(Boolean);
     line(`PAR-Q positivo: ${anyYes ? 'SI - Requiere precaución médica' : 'No'}`, 10);
+    line(`Notas PAR-Q: ${fmt(health.parq_notes)}`, 10);
     line(`Dolor en reposo: ${fmt(health.pain_at_rest, '/10')} | Dolor con movimiento: ${fmt(health.pain_with_movement)}`, 10);
     line(`Mareos con esfuerzo: ${yesNo(health.dizziness_exertion)} | Palpitaciones: ${yesNo(health.palpitations)} | Historia familiar cardíaca: ${yesNo(health.family_heart_history)}`, 10);
     line(`Colesterol: ${fmt(health.cholesterol_known, ' mg/dL')} | Triglicéridos: ${fmt(health.triglycerides_known, ' mg/dL')}`, 10);
@@ -145,9 +147,26 @@ export default function Plan() {
       line(`Peso matutino (tendencia): ${fmt(assessment.morning_weight_trend)}`, 10);
       y += 2;
 
-      section('7. NUTRICIÓN E HIDRATACIÓN');
+      section('7. NUTRICIÓN E HIDRATACIÓN - DATOS BÁSICOS');
       line(`Agua: ${fmt(assessment.water_intake_liters, ' L/día')} | Proteína: ${fmt(assessment.protein_intake_g, ' g/día')} | Verduras: ${fmt(assessment.vegetables_per_day, '/día')}`, 10);
       line(`Comidas procesadas: ${fmt(assessment.processed_meals_per_week, '/semana')} | Ayuno intermitente: ${yesNo(assessment.intermittent_fasting)} ${assessment.fasting_schedule ? `(${assessment.fasting_schedule})` : ''}`, 10);
+
+      section('7B. ESTRUCTURA ALIMENTARIA');
+      line(`Frecuencia de comidas: ${fmt(assessment.meal_frequency)} | Tipo de alimentación: ${fmt(assessment.diet_type)}`, 10);
+      line(`Alergias/intolerancias: ${fmt(assessment.food_allergies)}`, 10);
+      line(`Suplementos: ${fmt(assessment.supplements)}`, 10);
+
+      section('7C. CALIDAD Y COMPORTAMIENTO ALIMENTARIO');
+      line(`Alcohol: ${fmt(assessment.alcohol_frequency)} | Azúcar/agregados: ${fmt(assessment.sugar_intake)} | Delivery/fuera: ${fmt(assessment.eating_out_frequency)}`, 10);
+      line(`Frutas: ${fmt(assessment.fruits_per_day, '/día')} | Pescado: ${fmt(assessment.fish_frequency)} | Café/cafeína: ${fmt(assessment.caffeine_cups, ' tazas/día')}`, 10);
+      line(`Picoteo entre comidas: ${yesNo(assessment.snacking_habit)}`, 10);
+
+      section('7D. TIMING Y ORGANIZACIÓN');
+      line(`Última comida: ${fmt(assessment.last_meal_time)} | Quién cocina: ${fmt(assessment.meal_planner)}`, 10);
+
+      if (assessment.notes) {
+        line(`Notas adicionales: ${fmt(assessment.notes)}`, 10);
+      }
     }
 
     if (test) {
@@ -164,7 +183,7 @@ export default function Plan() {
       section('10. FUERZA MÁXIMA ESTIMADA');
       line(`Push-ups: ${fmt(test.pushup_reps, ' reps')} (${fmt(test.pushup_score)}) | Squat BW: ${fmt(test.max_squat_reps, ' reps')} | Pull-ups: ${fmt(test.max_pullup_reps, ' reps')}`, 10);
       line(`Wall sit: ${fmt(test.wall_sit_sec, ' seg')} | Plank to push-up: ${fmt(test.plank_to_pushup_reps, ' reps')}`, 10);
-      line(`Test silla: ${fmt(test.chair_test_reps, ' reps')} (${fmt(test.chair_test_score)})`, 10);
+      line(`Test silla: ${fmt(test.chair_test_reps, ' reps')} (${fmt(test.chair_test_score)}) | Tiempo: ${fmt(test.chair_test_time_sec, ' seg')} | Fecha: ${fmt(test.test_date)}`, 10);
 
       section('11. POTENCIA Y VELOCIDAD');
       line(`Vertical jump: ${fmt(test.vertical_jump_cm, ' cm')} | Broad jump: ${fmt(test.broad_jump_cm, ' cm')} | Medball throw: ${fmt(test.medball_throw_m, ' m')}`, 10);
@@ -180,6 +199,7 @@ export default function Plan() {
       line(`Sentadilla profunda: ${fmt(test.deep_squat_depth)} (${fmt(test.deep_squat_score)}) | Compensaciones: ${fmt(test.deep_squat_compensation)}`, 10);
       line(`Equilibrio unipodal: D ${fmt(test.balance_dominant_sec, 's')} / ND ${fmt(test.balance_nondominant_sec, 's')} (${fmt(test.balance_score)})`, 10);
       line(`SRT: ${fmt(test.srt_score, '/10')} | ${fmt(test.srt_interpretation)}`, 10);
+      line(`Notas de los tests: ${fmt(test.notes)}`, 10);
     }
 
     y += 5;
@@ -295,7 +315,7 @@ export default function Plan() {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          El PDF incluye <strong>13 secciones</strong>: perfil completo, screening cardiovascular, historial clínico, biomarcadores, mentalidad, mediciones corporales, nutrición, movilidad, estabilidad, fuerza, potencia, aeróbico y tests adicionales.
+          El PDF incluye <strong>13+ secciones</strong>: perfil completo, screening cardiovascular, historial clínico, biomarcadores, mentalidad, mediciones corporales, nutrición completa, movilidad, estabilidad, fuerza, potencia, aeróbico y tests adicionales.
         </p>
       </div>
 
