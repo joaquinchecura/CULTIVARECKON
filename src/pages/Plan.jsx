@@ -210,19 +210,24 @@ export default function Plan() {
       line(`Notas de los tests: ${fmt(test.notes)}`, 10);
     }
 
-    y += 5;
-    doc.setDrawColor(59, 130, 246);
-    doc.line(20, y, 190, y);
-    y += 5;
-    line('═══════════════════════════════════════════════════', 9);
-    line('Ficha generada automáticamente por CULTIVAFITNESS RECKON', 9);
-    line(`Tipo de plan solicitado: ${planType} | Fecha: ${new Date().toLocaleDateString('es-AR')}`, 9);
-    line('Enviar este PDF al especialista para la elaboración del plan personalizado.', 9);
-    line('═══════════════════════════════════════════════════', 9);
-
-    doc.save(`Ficha_RECKON_${profile.full_name?.replace(/\s+/g, '_') || 'Usuario'}_${new Date().toISOString().split('T')[0]}.pdf`);
-    toast({ title: 'PDF descargado correctamente.', description: 'Incluye todos los datos del perfil, salud, mediciones, nutrición y tests.' });
-  };
+       // Footer limpio
+       y += 8;
+       doc.setDrawColor(59, 130, 246);
+       doc.line(20, y, 190, y);
+       y += 8;
+       
+       // Usar doc.text directo en vez de line() para evitar caracteres de control
+       doc.setFontSize(9);
+       doc.setFont('helvetica', 'normal');
+       doc.text('═══════════════════════════════════════════════════', 20, y);
+       y += 6;
+       doc.text('Ficha generada automaticamente por CULTIVAFITNESS RECKON', 20, y);
+       y += 6;
+       doc.text(`Tipo de plan solicitado: ${planType} | Fecha: ${new Date().toLocaleDateString('es-AR')}`, 20, y);
+       y += 6;
+       doc.text('Enviar este PDF al especialista para la elaboracion del plan personalizado.', 20, y);
+       y += 6;
+       doc.text('═══════════════════════════════════════════════════', 20, y);
 
   const DataCard = ({ icon: Icon, label, value, color = 'text-primary' }) => (
     <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg text-sm">
