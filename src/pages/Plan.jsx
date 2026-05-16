@@ -43,31 +43,39 @@ export default function Plan() {
     }
 
     const doc = new jsPDF();
-    let y = 20;
+    let y = 15;  // ← Empezar más arriba
+    
     const line = (text, size = 12, bold = false) => {
       doc.setFontSize(size);
       if (bold) doc.setFont('helvetica', 'bold');
       else doc.setFont('helvetica', 'normal');
+      y += size * 0.35;  // ← Padding antes de escribir
       doc.text(text, 20, y);
-      y += size * 0.55;
-      if (y > 270) { doc.addPage(); y = 20; }
+      y += size * 0.45;  // ← Espacio después
+      if (y > 275) { doc.addPage(); y = 15; }
     };
+    
     const section = (title) => {
-      y += 3;
+      y += 4;  // ← Más espacio antes de la sección
       doc.setFillColor(59, 130, 246);
-      doc.rect(18, y - 4, 174, 8, 'F');
+      doc.rect(18, y - 3, 174, 7, 'F');  // ← Rectángulo más compacto
       doc.setTextColor(255, 255, 255);
-      line(title, 12, true);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, 20, y + 2);  // ← Texto centrado en el rectángulo
       doc.setTextColor(0, 0, 0);
-      y += 2;
+      y += 6;  // ← Espacio después de la sección
     };
 
+    // Header principal
     doc.setFillColor(30, 41, 59);
-    doc.rect(0, 0, 210, 18, 'F');
+    doc.rect(0, 0, 210, 22, 'F');  // ← Más alto para no cortar
     doc.setTextColor(255, 255, 255);
-    line('CULTIVAFITNESS RECKON - FICHA COMPLETA DEL USUARIO', 13, true);
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CULTIVAFITNESS RECKON - FICHA COMPLETA DEL USUARIO', 20, 14);  // ← Posición fija
     doc.setTextColor(0, 0, 0);
-    y += 4;
+    y = 26;  // ← Empezar contenido debajo del header
 
     section('1. DATOS PERSONALES Y FÍSICO');
     line(`Nombre: ${fmt(profile.full_name)} | Edad: ${age} años | Género: ${fmt(profile.gender)}`, 10);
