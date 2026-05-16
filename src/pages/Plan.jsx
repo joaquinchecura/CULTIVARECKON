@@ -229,7 +229,15 @@ export default function Plan() {
        y += 6;
        doc.text('═══════════════════════════════════════════════════', 20, y);
 
-  const DataCard = ({ icon: Icon, label, value, color = 'text-primary' }) => (
+       // Guardar PDF
+      doc.save(`Ficha_RECKON_${profile.full_name?.replace(/\s+/g, '_') || 'Usuario'}_${new Date().toISOString().split('T')[0]}.pdf`);
+      toast({ title: 'PDF descargado correctamente.', description: 'Incluye todos los datos del perfil, salud, mediciones, nutricion y tests.' });
+
+       // Guardar fecha de evaluacion para NextEvaluation
+       localStorage.setItem('lastEvaluationDate', new Date().toISOString());
+     };
+
+       const DataCard = ({ icon: Icon, label, value, color = 'text-primary' }) => (
     <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg text-sm">
       <Icon className={`w-4 h-4 ${color} flex-shrink-0`} />
       <span className="text-muted-foreground">{label}:</span>
