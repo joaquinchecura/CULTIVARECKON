@@ -210,25 +210,24 @@ export default function Plan() {
       line(`Notas de los tests: ${fmt(test.notes)}`, 10);
     }
 
-       // Footer limpio
-       y += 8;
-       doc.setDrawColor(59, 130, 246);
-       doc.line(20, y, 190, y);
-       y += 8;
-       
-       // Usar doc.text directo en vez de line() para evitar caracteres de control
-       doc.setFontSize(9);
-       doc.setFont('helvetica', 'normal');
-       doc.text('═══════════════════════════════════════════════════', 20, y);
-       y += 6;
-       doc.text('Ficha generada automaticamente por CULTIVAFITNESS RECKON', 20, y);
-       y += 6;
-       doc.text(`Tipo de plan solicitado: ${planType} | Fecha: ${new Date().toLocaleDateString('es-AR')}`, 20, y);
-       y += 6;
-       doc.text('Enviar este PDF al especialista para la elaboracion del plan personalizado.', 20, y);
-       y += 6;
-       doc.text('═══════════════════════════════════════════════════', 20, y);
-
+           // Footer limpio
+    y += 8;
+    doc.setDrawColor(59, 130, 246);
+    doc.line(20, y, 190, y);
+    y += 8;
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('===================================================', 20, y);
+    y += 6;
+    doc.text('Ficha generada automaticamente por CULTIVAFITNESS RECKON', 20, y);
+    y += 6;
+    doc.text(`Tipo de plan solicitado: ${planType} | Fecha: ${new Date().toLocaleDateString('es-AR')}`, 20, y);
+    y += 6;
+    doc.text('Enviar este PDF al especialista para la elaboracion del plan personalizado.', 20, y);
+    y += 6;
+    doc.text('===================================================', 20, y);
+    
        // Guardar PDF
       doc.save(`Ficha_RECKON_${profile.full_name?.replace(/\s+/g, '_') || 'Usuario'}_${new Date().toISOString().split('T')[0]}.pdf`);
       toast({ title: 'PDF descargado correctamente.', description: 'Incluye todos los datos del perfil, salud, mediciones, nutricion y tests.' });
