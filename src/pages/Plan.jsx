@@ -5,10 +5,58 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { FileDown, Dumbbell, CheckCircle2, User, Heart, Ruler, Activity, Brain, Battery, Apple, Droplets, AlertTriangle } from 'lucide-react';
-import { jsPDF } from 'jspdf';
 import { useReckonQuery } from '@/hooks/useReckonQuery';
+import autoTable from 'jspdf-autotable';
+import { sectionCompleteness, fieldsScore } from '@/lib/completeness';
 
 const PLAN_TYPES = ['Entrenamiento', 'Rehabilitación', 'Mixto'];
+
+// ---------- Helpers de formato (únicos, nivel de módulo) ----------
+// Importante: 0 es un valor válido (ej. dolor 0/10), no se pierde.
+// Devuelven null (no 'N/D') a propósito: así section()/rows() puede
+// descartar filas vacías en vez de imprimir "N/D" por todos lados.
+const fmt = (v, unit = '') => (v !== undefined && v !== '' && v !== null) ? `${v}${unit}` : null;
+const yesNo = (v) => v === true ? 'Sí' : v === false ? 'No' : null;
+const arr = (v) => Array.isArray(v) && v.length ? v.join(', ') : null;
+
+// Arma filas [label, value] y descarta automáticamente las que están vacías.
+function rows(pairs) {
+  return pairs
+    .map(([label, value]) => [label, value])
+    .filter(([, value]) => value !== null && value !== undefined && value !== '');
+}
+
+// ---------- PAR-Q estructurado (no solo true/false global) ----------
+const PARQ_LABELS = {
+  q1_heart_condition: 'Enfermedad cardíaca diagnosticada',
+  q2_chest_pain_activity: 'Dolor en el pecho con actividad física',
+  q3_chest_pain_rest: 'Dolor en el pecho en reposo (último mes)',
+  q4_dizziness: 'Pérdida de equilibrio / mareos / desmayos',
+  q5_bone_joint: 'Problema óseo o articular que empeora con ejercicio',
+  q6_blood_pressure_medication: 'Medicado para presión arterial o corazón',
+  q7_other_reason: 'Otro motivo médico para no hacer actividad física',
+};
+
+function parqSummary(health) {
+  const parq = health?.parq_answers || {};
+  const positives = Object.entries(parq)
+    .filter(([, v]) => v === true)
+    .map(([k]) => PARQ_LABELS[k] || k);
+  return { positives, isPositive: positives.length > 0 };
+}
+
+// ---------- Completitud (nivel de módulo, no depende del componente) ----------
+function computeOverallCompleteness({ profile, health, assessment, test }) {
+  const scores = [
+    fieldsScore([profile?.full_name, profile?.birth_date, profile?.gender, profile?.goal, profile?.available_days], 'essential'),
+    fieldsScore(Object.values(health?.parq_answers || {}), 'essential'),
+    fieldsScore([assessment?.weight_kg, assessment?.height_cm, assessment?.waist_cm, assessment?.hip_cm], 'accessible'),
+    fieldsScore([test?.pushup_reps, test?.plank_sec, test?.chair_test_reps, test?.deep_squat_depth], 'accessible'),
+    fieldsScore([assessment?.body_fat_pct, assessment?.muscle_mass_kg, assessment?.somatotype_endomorphy], 'pro'),
+    fieldsScore([test?.cooper_distance_m, test?.vertical_jump_cm, test?.y_balance_notes], 'pro'),
+  ];
+  return sectionCompleteness(scores);
+}
 
 export default function Plan() {
   const { toast } = useToast();
@@ -29,214 +77,253 @@ export default function Plan() {
 
   const hasEnoughData = profile && health;
 
-  const yesNo = (v) => v === true ? 'Sí' : v === false ? 'No' : 'N/D';
-  const fmt = (v, unit = '') => v !== undefined && v !== '' && v !== null ? `${v}${unit}` : 'N/D';
-  const arr = (v) => Array.isArray(v) && v.length ? v.join(', ') : 'Ninguno/a';
   const age = profile?.birth_date
     ? Math.floor((new Date() - new Date(profile.birth_date)) / (1000 * 60 * 60 * 24 * 365.25))
-    : 'N/D';
+    : null;
 
-  const generatePDF = () => {
+  // ---------- Generador principal ----------
+  const generatePDF = async () => {
     if (!profile || !health) {
       toast({ title: 'Datos incompletos', description: 'Completá al menos el Perfil y el Historial de Salud.', variant: 'destructive' });
       return;
     }
 
+    // Carga perezosa: jsPDF solo se descarga cuando hace falta
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
-    let y = 15;  // ← Empezar más arriba
-    
-    const line = (text, size = 12, bold = false) => {
-      doc.setFontSize(size);
-      if (bold) doc.setFont('helvetica', 'bold');
-      else doc.setFont('helvetica', 'normal');
-      y += size * 0.35;  // ← Padding antes de escribir
-      doc.text(text, 20, y);
-      y += size * 0.45;  // ← Espacio después
-      if (y > 275) { doc.addPage(); y = 15; }
-    };
-    
-    const section = (title) => {
-      y += 4;  // ← Más espacio antes de la sección
-      doc.setFillColor(59, 130, 246);
-      doc.rect(18, y - 3, 174, 7, 'F');  // ← Rectángulo más compacto
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.text(title, 20, y + 2);  // ← Texto centrado en el rectángulo
-      doc.setTextColor(0, 0, 0);
-      y += 6;  // ← Espacio después de la sección
-    };
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 14;
+    let y = 20;
 
-    // Header principal
+    const { positives: parqPositives, isPositive: parqIsPositive } = parqSummary(health);
+    const completeness = computeOverallCompleteness({ profile, health, assessment, test });
+
+    // ---------- Header ----------
     doc.setFillColor(30, 41, 59);
-    doc.rect(0, 0, 210, 22, 'F');  // ← Más alto para no cortar
+    doc.rect(0, 0, pageWidth, 24, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(13);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('CULTIVAFITNESS RECKON - FICHA COMPLETA DEL USUARIO', 20, 14);  // ← Posición fija
-    doc.setTextColor(0, 0, 0);
-    y = 26;  // ← Empezar contenido debajo del header
-
-    section('1. DATOS PERSONALES Y FÍSICO');
-    line(`Nombre: ${fmt(profile.full_name)} | Edad: ${age} años | Género: ${fmt(profile.gender)}`, 10);
-    line(`Altura: ${fmt(profile.height_cm, ' cm')} | Peso: ${fmt(profile.weight_kg, ' kg')} | IMC: ${fmt(assessment?.imc)}`, 10);
-    line(`Ocupación: ${fmt(profile.occupation)} | Tipo de trabajo: ${fmt(profile.work_type)}`, 10);
-    line(`Objetivo: ${fmt(profile.goal)} | Nivel actividad: ${fmt(profile.activity_level)}`, 10);
-    line(`Días disponibles: ${fmt(profile.available_days, '/semana')} | Duración: ${fmt(profile.session_duration_min, ' min')} | Horario preferido: ${fmt(profile.preferred_training_time)}`, 10);
-    line(`Equipamiento: ${fmt(profile.equipment_access)} | Compañía: ${fmt(profile.training_companions)} | Nivel competitivo: ${fmt(profile.competitive_level)}`, 10);
-    line(`Actividades preferidas: ${arr(profile.preferred_activities)}`, 10);
-    line(`Ejercicios que AMA: ${fmt(profile.loved_exercises)}`, 10);
-    line(`Ejercicios que ODIA: ${fmt(profile.hated_exercises)}`, 10);
-    y += 2;
-
-    line(`Tipo de cuerpo: ${fmt(profile.body_type)} | Postura: ${fmt(profile.posture)} | Flexibilidad: ${fmt(profile.flexibility_level, '/10')}`, 10);
-    line(`% Grasa estimado: ${fmt(profile.body_fat_pct_estimate, '%')} | Masa magra calc: ${profile.weight_kg && profile.body_fat_pct_estimate ? (Number(profile.weight_kg) * (1 - Number(profile.body_fat_pct_estimate) / 100)).toFixed(1) + ' kg' : 'N/D'}`, 10);
-    line(`Masa muscular estimada: ${fmt(profile.muscle_mass_kg_estimate, ' kg')} | Preferencia de entrenamiento: ${fmt(profile.training_location_pref)}`, 10);
-    line(`Circunferencia cuello: ${fmt(profile.neck_circumference_cm, ' cm')} | Muñeca: ${fmt(profile.wrist_circumference_cm, ' cm')}`, 10);
-    line(`Dolor crónico: ${fmt(profile.chronic_pain_areas)}`, 10);
-    y += 2;
-
-    line(`Sueño: ${fmt(profile.sleep_hours, ' h')} (calidad ${fmt(profile.sleep_quality, '/10')}) | Estrés: ${fmt(profile.stress_level, '/10')}`, 10);
-    line(`Comidas/día: ${fmt(profile.meals_per_day)} | Alcohol: ${fmt(profile.alcohol_frequency)} | Tabaco: ${fmt(profile.smoking_status)}`, 10);
-    line(`Cafeína: ${fmt(profile.caffeine_intake)} | Suplementos: ${fmt(profile.current_supplements)}`, 10);
-    y += 2;
-
-    line(`Deportes previos: ${fmt(profile.previous_sports)}`, 10);
-    line(`Años entrenando: ${fmt(profile.years_training)} | Mejor marca: ${fmt(profile.personal_best_record)} | Coach previo: ${fmt(profile.previous_coach)}`, 10);
-    line(`Lesiones pasadas: ${fmt(profile.past_injuries)}`, 10);
-    line(`Cirugías ortopédicas: ${fmt(profile.orthopedic_surgeries)}`, 10);
-    line(`Hospitalizaciones: ${fmt(profile.hospitalizations)}`, 10);
-    line(`Alergias: ${fmt(profile.food_allergies)} | Intolerancias: ${fmt(profile.food_intolerances)}`, 10);
-    y += 2;
-
-    line(`Peso objetivo: ${fmt(profile.target_weight_kg, ' kg')} | % Grasa objetivo: ${fmt(profile.target_body_fat_pct, '%')} | Fecha objetivo: ${fmt(profile.target_date)}`, 10);
-
-    section('2. SCREENING CARDIOVASCULAR Y DOLOR');
-    const parq = health.parq_answers || {};
-    const anyYes = Object.values(parq).some(Boolean);
-    line(`PAR-Q positivo: ${anyYes ? 'SI - Requiere precaución médica' : 'No'}`, 10);
-    line(`Notas PAR-Q: ${fmt(health.parq_notes)}`, 10);
-    line(`Dolor en reposo: ${fmt(health.pain_at_rest, '/10')} | Dolor con movimiento: ${fmt(health.pain_with_movement)}`, 10);
-    line(`Mareos con esfuerzo: ${yesNo(health.dizziness_exertion)} | Palpitaciones: ${yesNo(health.palpitations)} | Historia familiar cardíaca: ${yesNo(health.family_heart_history)}`, 10);
-    line(`Colesterol: ${fmt(health.cholesterol_known, ' mg/dL')} | Triglicéridos: ${fmt(health.triglycerides_known, ' mg/dL')}`, 10);
-    line(`Presión arterial: ${fmt(health.blood_pressure_known)} | Glucemia ayunas: ${fmt(health.fasting_glucose_known, ' mg/dL')}`, 10);
-    line(`COVID / long COVID: ${fmt(health.covid_history)} ${health.long_covid ? '(Long COVID confirmado)' : ''}`, 10);
-    y += 2;
-
-    section('3. HISTORIAL CLÍNICO');
-    line(`Condiciones médicas: ${arr(health.medical_conditions)}`, 10);
-    line(`Lesiones previas: ${arr(health.injuries)}`, 10);
-    line(`Cirugías: ${arr(health.surgeries)}`, 10);
-    line(`Medicamentos: ${arr(health.medications)}`, 10);
-    line(`Informe clínico: ${fmt(health.clinical_report)}`, 10);
-    line(`Historial deportivo: ${fmt(health.sports_history)}`, 10);
-    line(`Entrenamiento actual: ${fmt(health.current_training)}`, 10);
-
-    section('4. BIOMARCADORES DE RECUPERACIÓN');
-    line(`HRV matutino: ${fmt(health.hrv_morning, ' ms')} | SpO2: ${fmt(health.spo2, '%')} | Temp matutina: ${fmt(health.morning_temperature, ' °C')}`, 10);
-    line(`FC en reposo: ${fmt(health.resting_heart_rate, ' lpm')}`, 10);
-
-    section('5. MENTALIDAD Y ADHERENCIA');
-    line(`Motivación: ${fmt(health.motivation_level, '/10')} | Autoconfianza: ${fmt(health.exercise_confidence, '/10')}`, 10);
-    line(`Barreras percibidas: ${fmt(health.perceived_barriers)}`, 10);
-    line(`Soporte social: ${fmt(health.social_support)}`, 10);
-    line(`Historial de abandono: ${fmt(health.dropout_history, ' veces')}`, 10);
-
-    if (assessment) {
-      section('6. MEDICIONES CORPORALES Y COMPOSICIÓN');
-      line(`Fecha: ${fmt(assessment.assessment_date)} | Peso: ${fmt(assessment.weight_kg, ' kg')} | Altura: ${fmt(assessment.height_cm, ' cm')}`, 10);
-      line(`IMC: ${fmt(assessment.imc)} | Cintura: ${fmt(assessment.waist_cm, ' cm')} | Cadera: ${fmt(assessment.hip_cm, ' cm')} | ICC: ${fmt(assessment.waist_hip_ratio)}`, 10);
-      line(`Cuello: ${fmt(assessment.neck_cm, ' cm')} | Brazo: ${fmt(assessment.arm_cm, ' cm')} | Muslo: ${fmt(assessment.thigh_cm, ' cm')} | Pantorrilla: ${fmt(assessment.calf_cm, ' cm')}`, 10);
-      line(`Fémur: ${fmt(assessment.femur_cm, ' cm')} | Tibia: ${fmt(assessment.tibia_cm, ' cm')} | Húmero: ${fmt(assessment.humerus_cm, ' cm')}`, 10);
-      line(`% Grasa (BIA): ${fmt(assessment.body_fat_pct, '%')} | Masa muscular: ${fmt(assessment.muscle_mass_kg, ' kg')} | Grasa visceral: ${fmt(assessment.visceral_fat)}`, 10);
-      line(`Masa ósea: ${fmt(assessment.bone_mass_kg, ' kg')} | Edad metabólica: ${fmt(assessment.metabolic_age, ' años')}`, 10);
-      line(`Somatotipo: Endo ${fmt(assessment.somatotype_endomorphy)} / Meso ${fmt(assessment.somatotype_mesomorphy)} / Ecto ${fmt(assessment.somatotype_ectomorphy)}`, 10);
-      line(`Pliegues: Pecho ${fmt(assessment.skinfold_chest_mm, ' mm')} / Abd ${fmt(assessment.skinfold_abdominal_mm, ' mm')} / Muslo ${fmt(assessment.skinfold_thigh_mm, ' mm')}`, 10);
-      line(`Peso matutino (tendencia): ${fmt(assessment.morning_weight_trend)}`, 10);
-      y += 2;
-
-      section('7. NUTRICIÓN E HIDRATACIÓN - DATOS BÁSICOS');
-      line(`Agua: ${fmt(assessment.water_intake_liters, ' L/día')} | Proteína: ${fmt(assessment.protein_intake_g, ' g/día')} | Verduras: ${fmt(assessment.vegetables_per_day, '/día')}`, 10);
-      line(`Comidas procesadas: ${fmt(assessment.processed_meals_per_week, '/semana')} | Ayuno intermitente: ${yesNo(assessment.intermittent_fasting)} ${assessment.fasting_schedule ? `(${assessment.fasting_schedule})` : ''}`, 10);
-
-      section('7B. ESTRUCTURA ALIMENTARIA');
-      line(`Frecuencia de comidas: ${fmt(assessment.meal_frequency)} | Tipo de alimentación: ${fmt(assessment.diet_type)}`, 10);
-      line(`Alergias/intolerancias: ${fmt(assessment.food_allergies)}`, 10);
-      line(`Suplementos: ${fmt(assessment.supplements)}`, 10);
-
-      section('7C. CALIDAD Y COMPORTAMIENTO ALIMENTARIO');
-      line(`Alcohol: ${fmt(assessment.alcohol_frequency)} | Azúcar/agregados: ${fmt(assessment.sugar_intake)} | Delivery/fuera: ${fmt(assessment.eating_out_frequency)}`, 10);
-      line(`Frutas: ${fmt(assessment.fruits_per_day, '/día')} | Pescado: ${fmt(assessment.fish_frequency)} | Café/cafeína: ${fmt(assessment.caffeine_cups, ' tazas/día')}`, 10);
-      line(`Picoteo entre comidas: ${yesNo(assessment.snacking_habit)}`, 10);
-
-      section('7D. TIMING Y ORGANIZACIÓN');
-      line(`Última comida: ${fmt(assessment.last_meal_time)} | Quién cocina: ${fmt(assessment.meal_planner)}`, 10);
-
-      if (assessment.notes) {
-        line(`Notas adicionales: ${fmt(assessment.notes)}`, 10);
-      }
-    }
-
-    if (test) {
-      section('8. MOVILIDAD ARTICULAR');
-      line(`Apley scratch: ${fmt(test.apley_scratch)} | Thomas test: ${fmt(test.thomas_test)}`, 10);
-      line(`Knee-to-wall: ${fmt(test.knee_to_wall_cm, ' cm')} | Rotación torácica: ${fmt(test.thoracic_rotation_deg, '°')}`, 10);
-      line(`Extensión lumbar: ${fmt(test.lumbar_extension_notes)}`, 10);
-
-      section('9. ESTABILIDAD Y CONTROL');
-      line(`Plank: ${fmt(test.plank_sec, ' seg')} (${fmt(test.plank_score)}) | Side plank: I ${fmt(test.side_plank_left_sec, 's')} / D ${fmt(test.side_plank_right_sec, 's')}`, 10);
-      line(`Bird dog: ${fmt(test.bird_dog_reps, ' reps')} | Dead bug: ${fmt(test.dead_bug_reps, ' reps')} | SL glute bridge: ${fmt(test.single_leg_glute_bridge_reps, ' reps')}`, 10);
-      line(`Y-balance: ${fmt(test.y_balance_notes)}`, 10);
-
-      section('10. FUERZA MÁXIMA ESTIMADA');
-      line(`Push-ups: ${fmt(test.pushup_reps, ' reps')} (${fmt(test.pushup_score)}) | Squat BW: ${fmt(test.max_squat_reps, ' reps')} | Pull-ups: ${fmt(test.max_pullup_reps, ' reps')}`, 10);
-      line(`Wall sit: ${fmt(test.wall_sit_sec, ' seg')} | Plank to push-up: ${fmt(test.plank_to_pushup_reps, ' reps')}`, 10);
-      line(`Test silla: ${fmt(test.chair_test_reps, ' reps')} (${fmt(test.chair_test_score)}) | Tiempo: ${fmt(test.chair_test_time_sec, ' seg')} | Fecha: ${fmt(test.test_date)}`, 10);
-
-      section('11. POTENCIA Y VELOCIDAD');
-      line(`Vertical jump: ${fmt(test.vertical_jump_cm, ' cm')} | Broad jump: ${fmt(test.broad_jump_cm, ' cm')} | Medball throw: ${fmt(test.medball_throw_m, ' m')}`, 10);
-      line(`Sprint 10m: ${fmt(test.sprint_10m_sec, ' seg')} | Agility 5-10-5: ${fmt(test.agility_5_10_5_sec, ' seg')}`, 10);
-
-      section('12. CAPACIDAD AERÓBICA');
-      line(`Cooper test: ${fmt(test.cooper_distance_m, ' m')} -> VO2max est: ${fmt(test.cooper_vo2max, ' ml/kg/min')}`, 10);
-      line(`2-step HR recovery: ${fmt(test.two_step_hr_recovery, ' lpm')} | RPE marcha: ${fmt(test.rpe_3min_walk, '/10')}`, 10);
-      line(`Talk test: ${fmt(test.talk_test_result)} | Step test FC: ${fmt(test.step_test_heart_rate, ' lpm')} (${fmt(test.step_test_score)})`, 10);
-      line(`VO2max estimado (step): ${fmt(test.vo2max_estimate, ' ml/kg/min')}`, 10);
-
-      section('13. TESTS ADICIONALES');
-      line(`Sentadilla profunda: ${fmt(test.deep_squat_depth)} (${fmt(test.deep_squat_score)}) | Compensaciones: ${fmt(test.deep_squat_compensation)}`, 10);
-      line(`Equilibrio unipodal: D ${fmt(test.balance_dominant_sec, 's')} / ND ${fmt(test.balance_nondominant_sec, 's')} (${fmt(test.balance_score)})`, 10);
-      line(`SRT: ${fmt(test.srt_score, '/10')} | ${fmt(test.srt_interpretation)}`, 10);
-      line(`Notas de los tests: ${fmt(test.notes)}`, 10);
-    }
-
-           // Footer limpio
-    y += 8;
-    doc.setDrawColor(59, 130, 246);
-    doc.line(20, y, 190, y);
-    y += 8;
-    
+    doc.text('CULTIVAFITNESS · RECKON', margin, 15);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('===================================================', 20, y);
-    y += 6;
-    doc.text('Ficha generada automaticamente por CULTIVAFITNESS RECKON', 20, y);
-    y += 6;
-    doc.text(`Tipo de plan solicitado: ${planType} | Fecha: ${new Date().toLocaleDateString('es-AR')}`, 20, y);
-    y += 6;
-    doc.text('Enviar este PDF al especialista para la elaboracion del plan personalizado.', 20, y);
-    y += 6;
-    doc.text('===================================================', 20, y);
-    
-       // Guardar PDF
-      doc.save(`Ficha_RECKON_${profile.full_name?.replace(/\s+/g, '_') || 'Usuario'}_${new Date().toISOString().split('T')[0]}.pdf`);
-      toast({ title: 'PDF descargado correctamente.', description: 'Incluye todos los datos del perfil, salud, mediciones, nutricion y tests.' });
+    doc.text('Ficha de evaluación para generación de plan con IA', margin, 20);
+    doc.setTextColor(0, 0, 0);
+    y = 32;
 
-       // Guardar fecha de evaluacion para NextEvaluation
-       localStorage.setItem('lastEvaluationDate', new Date().toISOString());
-     };
+    // ---------- Portada / resumen ejecutivo ----------
+    autoTable(doc, {
+      startY: y,
+      theme: 'plain',
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 10, cellPadding: 2 },
+      body: [
+        ['Tipo de plan solicitado', planType],
+        ['Cliente', `${fmt(profile.full_name) || 'N/D'} — ${age ?? 'N/D'} años — ${fmt(profile.gender) || 'N/D'}`],
+        ['Fecha de generación', new Date().toLocaleDateString('es-AR')],
+        ['Nivel de detalle de la ficha', `${completeness.level.label} (${completeness.pct}%)`],
+        ['PAR-Q', parqIsPositive ? 'POSITIVO — ver alertas abajo' : 'Negativo — sin alertas cardiovasculares reportadas'],
+      ],
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55 } },
+    });
+    y = doc.lastAutoTable.finalY + 4;
 
-       const DataCard = ({ icon: Icon, label, value, color = 'text-primary' }) => (
+    if (parqIsPositive) {
+      doc.setFillColor(254, 242, 242);
+      doc.setDrawColor(239, 68, 68);
+      const boxHeight = 8 + parqPositives.length * 5;
+      doc.roundedRect(margin, y, pageWidth - margin * 2, boxHeight, 2, 2, 'FD');
+      doc.setTextColor(185, 28, 28);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('⚠ Atención médica previa recomendada — PAR-Q positivo:', margin + 3, y + 6);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      parqPositives.forEach((p, i) => doc.text(`• ${p}`, margin + 5, y + 11 + i * 5));
+      doc.setTextColor(0, 0, 0);
+      y += boxHeight + 6;
+    }
+
+    if (health.pain_at_rest || health.chronic_pain_areas || profile.chronic_pain_areas) {
+      doc.setFontSize(9);
+      doc.setTextColor(120, 53, 15);
+      doc.text(
+        `⚠ Dolor reportado — considerar al prescribir ejercicios. (Reposo: ${fmt(health.pain_at_rest, '/10') || 'N/D'})`,
+        margin, y
+      );
+      doc.setTextColor(0, 0, 0);
+      y += 6;
+    }
+
+    // ---------- Secciones dinámicas ----------
+    const section = (title, pairs) => {
+      const data = rows(pairs);
+      if (!data.length) return; // sección vacía → no se imprime, sin culpa
+      if (y > 260) { doc.addPage(); y = 20; }
+      doc.setFillColor(59, 130, 246);
+      doc.rect(margin, y, pageWidth - margin * 2, 7, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, margin + 2, y + 5);
+      doc.setTextColor(0, 0, 0);
+      y += 9;
+      autoTable(doc, {
+        startY: y,
+        theme: 'striped',
+        margin: { left: margin, right: margin },
+        styles: { fontSize: 9, cellPadding: 1.8, overflow: 'linebreak' },
+        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55 }, 1: { cellWidth: 'auto' } },
+        body: data,
+      });
+      y = doc.lastAutoTable.finalY + 5;
+    };
+
+    section('Datos personales y objetivos', [
+      ['Ocupación / tipo de trabajo', [fmt(profile.occupation), fmt(profile.work_type)].filter(Boolean).join(' — ') || null],
+      ['Objetivo principal', fmt(profile.goal)],
+      ['Nivel de actividad actual', fmt(profile.activity_level)],
+      ['Disponibilidad', [fmt(profile.available_days, ' días/sem'), fmt(profile.session_duration_min, ' min/sesión'), fmt(profile.preferred_training_time)].filter(Boolean).join(' — ') || null],
+      ['Equipamiento disponible', fmt(profile.equipment_access) || fmt(profile.training_location_pref)],
+      ['Compañía / nivel competitivo', [fmt(profile.training_companions), fmt(profile.competitive_level)].filter(Boolean).join(' — ') || null],
+      ['Actividades preferidas', arr(profile.preferred_activities)],
+      ['Ejercicios que ama', fmt(profile.loved_exercises)],
+      ['Ejercicios que evitar', fmt(profile.hated_exercises)],
+      ['Peso / % grasa / fecha objetivo', [fmt(profile.target_weight_kg, ' kg'), fmt(profile.target_body_fat_pct, '%'), fmt(profile.target_date)].filter(Boolean).join(' — ') || null],
+    ]);
+
+    section('Antropometría y composición', [
+      ['Altura / peso / IMC', [fmt(profile.height_cm, ' cm'), fmt(profile.weight_kg, ' kg'), fmt(assessment?.imc)].filter(Boolean).join(' — ') || null],
+      ['Cintura / cadera / ICC', [fmt(assessment?.waist_cm, ' cm'), fmt(assessment?.hip_cm, ' cm'), fmt(assessment?.waist_hip_ratio)].filter(Boolean).join(' — ') || null],
+      ['Cuello / brazo / muslo / pantorrilla', [fmt(assessment?.neck_cm, 'cm'), fmt(assessment?.arm_cm, 'cm'), fmt(assessment?.thigh_cm, 'cm'), fmt(assessment?.calf_cm, 'cm')].filter(Boolean).join(' — ') || null],
+      ['% Grasa corporal', fmt(assessment?.body_fat_pct, '%')],
+      ['Masa muscular / ósea', [fmt(assessment?.muscle_mass_kg, ' kg'), fmt(assessment?.bone_mass_kg, ' kg')].filter(Boolean).join(' — ') || null],
+      ['Grasa visceral / edad metabólica', [fmt(assessment?.visceral_fat), fmt(assessment?.metabolic_age, ' años')].filter(Boolean).join(' — ') || null],
+      ['Somatotipo (Endo/Meso/Ecto)', [assessment?.somatotype_endomorphy, assessment?.somatotype_mesomorphy, assessment?.somatotype_ectomorphy].every(v => v !== undefined && v !== '') ? `${assessment.somatotype_endomorphy} / ${assessment.somatotype_mesomorphy} / ${assessment.somatotype_ectomorphy}` : null],
+      ['Tipo de cuerpo / postura', [fmt(profile.body_type), fmt(profile.posture)].filter(Boolean).join(' — ') || null],
+      ['Flexibilidad general', fmt(profile.flexibility_level, '/10')],
+      ['Dolor crónico (zonas)', fmt(profile.chronic_pain_areas) || fmt(health.chronic_pain_areas)],
+    ]);
+
+    section('Screening cardiovascular', [
+      ['Mareos con esfuerzo', yesNo(health.dizziness_exertion)],
+      ['Palpitaciones', yesNo(health.palpitations)],
+      ['Historia familiar cardíaca', yesNo(health.family_heart_history)],
+      ['Presión arterial', fmt(health.blood_pressure_known)],
+      ['Colesterol / triglicéridos', [fmt(health.cholesterol_known, ' mg/dL'), fmt(health.triglycerides_known, ' mg/dL')].filter(Boolean).join(' — ') || null],
+      ['Glucemia en ayunas', fmt(health.fasting_glucose_known, ' mg/dL')],
+      ['COVID / long COVID', [fmt(health.covid_history), health.long_covid ? 'Long COVID confirmado' : null].filter(Boolean).join(' — ') || null],
+      ['FC en reposo', fmt(health.resting_heart_rate, ' lpm')],
+    ]);
+
+    section('Historial clínico y deportivo', [
+      ['Condiciones médicas', arr(health.medical_conditions)],
+      ['Lesiones / cirugías', [arr(health.injuries), arr(health.surgeries)].filter(Boolean).join(' · ') || null],
+      ['Medicamentos', arr(health.medications)],
+      ['Lesiones pasadas (detalle)', fmt(profile.past_injuries)],
+      ['Cirugías ortopédicas', fmt(profile.orthopedic_surgeries)],
+      ['Hospitalizaciones', fmt(health.hospitalizations) || fmt(profile.hospitalizations)],
+      ['Alergias / intolerancias alimentarias', [fmt(profile.food_allergies) || fmt(assessment?.food_allergies), fmt(profile.food_intolerances)].filter(Boolean).join(' — ') || null],
+      ['Deportes previos / años entrenando', [fmt(profile.previous_sports), fmt(profile.years_training, ' años')].filter(Boolean).join(' — ') || null],
+      ['Entrenamiento actual', fmt(health.current_training)],
+      ['Informe clínico / estudios', fmt(health.clinical_report)],
+    ]);
+
+    section('Nutrición', [
+      ['Tipo de alimentación', fmt(assessment?.diet_type)],
+      ['Comidas por día', fmt(profile.meals_per_day) || fmt(assessment?.meal_frequency)],
+      ['Agua / proteína estimada', [fmt(assessment?.water_intake_liters, ' L/día'), fmt(assessment?.protein_intake_g, ' g/día')].filter(Boolean).join(' — ') || null],
+      ['Verduras / frutas por día', [fmt(assessment?.vegetables_per_day), fmt(assessment?.fruits_per_day)].filter(Boolean).join(' — ') || null],
+      ['Alcohol / azúcar / comidas afuera', [fmt(assessment?.alcohol_frequency), fmt(assessment?.sugar_intake), fmt(assessment?.eating_out_frequency)].filter(Boolean).join(' — ') || null],
+      ['Ayuno intermitente', assessment?.intermittent_fasting ? (fmt(assessment.fasting_schedule) || 'Sí') : null],
+      ['Suplementos actuales', fmt(profile.current_supplements) || fmt(assessment?.supplements)],
+    ]);
+
+    section('Estilo de vida', [
+      ['Sueño', [fmt(profile.sleep_hours, ' h'), fmt(profile.sleep_quality, '/10 calidad')].filter(Boolean).join(' — ') || null],
+      ['Nivel de estrés', fmt(profile.stress_level, '/10')],
+      ['Tabaco / cafeína', [fmt(profile.smoking_status), fmt(profile.caffeine_intake)].filter(Boolean).join(' — ') || null],
+    ]);
+
+    section('Mentalidad y adherencia', [
+      ['Motivación / autoconfianza', [fmt(health.motivation_level, '/10'), fmt(health.exercise_confidence, '/10')].filter(Boolean).join(' — ') || null],
+      ['Barreras percibidas', fmt(health.perceived_barriers)],
+      ['Soporte social', fmt(health.social_support)],
+      ['Historial de abandono', fmt(health.dropout_history, ' veces')],
+    ]);
+
+    if (test) {
+      section('Movilidad y estabilidad', [
+        ['Apley scratch (hombro)', fmt(test.apley_scratch)],
+        ['Thomas test (cadera)', fmt(test.thomas_test)],
+        ['Knee-to-wall (tobillo)', fmt(test.knee_to_wall_cm, ' cm')],
+        ['Rotación torácica', fmt(test.thoracic_rotation_deg, '°')],
+        ['Sentadilla profunda', [fmt(test.deep_squat_depth), fmt(test.deep_squat_score)].filter(Boolean).join(' — ') || null],
+        ['Compensaciones observadas', fmt(test.deep_squat_compensation)],
+        ['Plank / side plank I-D', [fmt(test.plank_sec, 's'), fmt(test.side_plank_left_sec, 's'), fmt(test.side_plank_right_sec, 's')].filter(Boolean).join(' — ') || null],
+        ['Bird dog / dead bug', [fmt(test.bird_dog_reps, ' reps'), fmt(test.dead_bug_reps, ' reps')].filter(Boolean).join(' — ') || null],
+        ['Equilibrio unipodal (dom/no-dom)', [fmt(test.balance_dominant_sec, 's'), fmt(test.balance_nondominant_sec, 's')].filter(Boolean).join(' — ') || null],
+        ['Y-balance', fmt(test.y_balance_notes)],
+        ['Test sentarse-levantarse (SRT)', fmt(test.srt_score, '/10')],
+      ]);
+
+      section('Fuerza, potencia y capacidad aeróbica', [
+        ['Push-ups (max)', [fmt(test.pushup_reps, ' reps'), fmt(test.pushup_score)].filter(Boolean).join(' — ') || null],
+        ['Sentadilla / dominadas (max reps)', [fmt(test.max_squat_reps), fmt(test.max_pullup_reps)].filter(Boolean).join(' / ') || null],
+        ['Test de silla', [fmt(test.chair_test_reps, ' reps'), fmt(test.chair_test_score)].filter(Boolean).join(' — ') || null],
+        ['Salto vertical / horizontal', [fmt(test.vertical_jump_cm, ' cm'), fmt(test.broad_jump_cm, ' cm')].filter(Boolean).join(' — ') || null],
+        ['Sprint 10m / agilidad 5-10-5', [fmt(test.sprint_10m_sec, ' s'), fmt(test.agility_5_10_5_sec, ' s')].filter(Boolean).join(' — ') || null],
+        ['Cooper (distancia → VO2max est.)', test.cooper_distance_m ? `${test.cooper_distance_m} m → ${fmt(test.cooper_vo2max, ' ml/kg/min')}` : null],
+        ['Step test (FC → nivel)', [fmt(test.step_test_heart_rate, ' lpm'), fmt(test.step_test_score)].filter(Boolean).join(' — ') || null],
+        ['Talk test', fmt(test.talk_test_result)],
+      ]);
+
+      if (test.notes) section('Notas del profesional (tests)', [['Notas', test.notes]]);
+    }
+
+    if (planType === 'Rehabilitación' || planType === 'Mixto') {
+      section('Información para plan de rehabilitación', [
+        ['Diagnóstico / lesión actual', fmt(health.clinical_report)],
+        ['Zona de dolor', fmt(profile.chronic_pain_areas) || fmt(health.chronic_pain_areas)],
+        ['Dolor en reposo / movimiento', [fmt(health.pain_at_rest, '/10'), fmt(health.pain_with_movement)].filter(Boolean).join(' — ') || null],
+      ]);
+    }
+
+    // ---------- Footer: nota de completitud, no de "faltante" ----------
+    y = doc.lastAutoTable ? doc.lastAutoTable.finalY + 8 : y + 8;
+    if (y > 265) { doc.addPage(); y = 20; }
+    doc.setDrawColor(200, 200, 200);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 6;
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(`Ficha generada por CULTIVAFITNESS RECKON · Nivel de detalle: ${completeness.level.label} (${completeness.pct}%)`, margin, y);
+    y += 4;
+    doc.text('Las secciones sin datos no se incluyeron. Se puede completar más adelante y regenerar la ficha.', margin, y);
+    doc.setTextColor(0, 0, 0);
+
+    // ---------- Guardar PDF + exportar JSON estructurado (para pasarlo a la IA) ----------
+    const fileBase = `RECKON_${(profile.full_name || 'Usuario').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}`;
+    doc.save(`${fileBase}.pdf`);
+
+    const structuredData = {
+      plan_type: planType,
+      generated_at: new Date().toISOString(),
+      completeness,
+      parq: { positive: parqIsPositive, positives: parqPositives, notes: health.parq_notes || null },
+      profile, health, assessment: assessment || null, test: test || null,
+    };
+    const blob = new Blob([JSON.stringify(structuredData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `${fileBase}.json`; a.click();
+    URL.revokeObjectURL(url);
+
+    toast({ title: 'Ficha descargada', description: 'Se descargó el PDF y un archivo .json con los mismos datos estructurados para la IA.' });
+    localStorage.setItem('lastEvaluationDate', new Date().toISOString());
+  };
+
+  const DataCard = ({ icon: Icon, label, value, color = 'text-primary' }) => (
     <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg text-sm">
       <Icon className={`w-4 h-4 ${color} flex-shrink-0`} />
       <span className="text-muted-foreground">{label}:</span>
@@ -335,7 +422,7 @@ export default function Plan() {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          El PDF incluye <strong>13+ secciones</strong>: perfil completo, screening cardiovascular, historial clínico, biomarcadores, mentalidad, mediciones corporales, nutrición completa, movilidad, estabilidad, fuerza, potencia, aeróbico y tests adicionales.
+          El PDF incluye todas las secciones con datos cargados: perfil, screening cardiovascular, historial clínico, mentalidad, mediciones corporales, nutrición y tests de rendimiento.
         </p>
       </div>
 
