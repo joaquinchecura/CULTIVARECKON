@@ -484,7 +484,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Fuerza funcional de tren inferior — muy usado con adultos mayores y principiantes.',
       equipment: 'Una silla sin apoyabrazos',
-      image: 'tests/chair-test.webp',
+      image: 'tests/chair-test.jpg',
       hasTimer: true,
       timerTargetSec: 30,
       steps: [
@@ -505,7 +505,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Evalúa movilidad combinada de tobillo, cadera, columna y hombros.',
       equipment: 'Ninguno (opcional: un palo para sostener arriba de la cabeza)',
-      image: 'tests/deep-squat.webp',
+      image: 'tests/deep-squat.jpg',
       steps: [
         'Parado, pies al ancho de hombros, brazos extendidos arriba de la cabeza.',
         'Bajá en sentadilla lo más profundo que puedas, manteniendo talones en el piso y brazos arriba.',
@@ -525,7 +525,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Control de estabilidad en apoyo de una sola pierna.',
       equipment: 'Ninguno',
-      image: 'tests/balance.webp',
+      image: 'tests/balance.jpg',
       hasTimer: true,
       steps: [
         'Parate en una pierna, ojos abiertos, mirando al frente.',
@@ -546,7 +546,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Combina fuerza, movilidad y equilibrio — predictor general de condición física.',
       equipment: 'Ninguno',
-      image: 'tests/srt.webp',
+      image: 'tests/srt.jpg',
       steps: [
         'Parado descalzo, sentate en el piso y después volvé a pararte, usando la menor cantidad de apoyos posible (manos, rodillas, antebrazos).',
         'Empezás con 10 puntos y restás 1 por cada apoyo que uses (0.5 si perdés el equilibrio).',
@@ -563,7 +563,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Estima capacidad aeróbica sin necesidad de correr.',
       equipment: 'Un escalón de ~30cm y cronómetro',
-      image: 'tests/step-test.webp',
+      image: 'tests/step-test.jpg',
       highIntensity: true,
       steps: [
         'Subí y bajá un escalón de 30cm a ritmo constante durante 3 minutos.',
