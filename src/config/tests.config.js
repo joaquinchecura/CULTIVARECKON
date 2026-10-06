@@ -121,7 +121,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Mide resistencia del core en una postura isométrica.',
       equipment: 'Ninguno',
-      image: 'tests/plank.webp',
+      image: 'tests/plank.jpeg',
       hasTimer: true,
       steps: [
         'Apoyate sobre antebrazos y puntas de pie, cuerpo en línea recta de cabeza a talones.',
@@ -140,7 +140,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Detecta asimetrías de fuerza entre el lado izquierdo y derecho del core.',
       equipment: 'Ninguno',
-      image: 'tests/side-plank.webp',
+      image: 'tests/side-plank.jpg',
       hasTimer: true,
       steps: [
         'Acostate de lado, apoyado en un antebrazo, cuerpo en línea recta.',
@@ -161,7 +161,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Evalúa control motor lumbopélvico y coordinación brazo-pierna opuesta.',
       equipment: 'Ninguno',
-      image: 'tests/bird-dog.webp',
+      image: 'tests/bird-dog.jpeg',
       steps: [
         'Apoyate en cuatro patas, manos bajo hombros, rodillas bajo cadera.',
         'Extendé un brazo y la pierna opuesta al mismo tiempo, sin que la espalda se mueva.',
@@ -179,7 +179,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Mide estabilidad lumbar al mover brazos y piernas de forma independiente.',
       equipment: 'Ninguno',
-      image: 'tests/dead-bug.webp',
+      image: 'tests/dead-bug.jpg',
       steps: [
         'Acostate boca arriba, brazos al techo, rodillas y caderas en 90°.',
         'Bajá un brazo y la pierna opuesta hacia el piso, sin que la zona lumbar se despegue.',
@@ -197,7 +197,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Fuerza y estabilidad de cadera en apoyo unipodal.',
       equipment: 'Ninguno',
-      image: 'tests/glute-bridge.webp',
+      image: 'tests/glute-bridge.jpg',
       steps: [
         'Acostate boca arriba, una rodilla flexionada con el pie en el piso.',
         'Estirá la otra pierna al aire.',
@@ -215,7 +215,7 @@ export const TESTS = [
       mode: 'professional',
       purpose: 'Estima riesgo de lesión de miembro inferior por asimetrías de alcance.',
       equipment: 'Cinta en el piso marcando 3 direcciones, o cinta métrica',
-      image: 'tests/y-balance.webp',
+      image: 'tests/y-balance.jpg',
       steps: [
         'Parado en una pierna, alcanzá con la otra lo más lejos posible en 3 direcciones (adelante, atrás-adentro, atrás-afuera) sin perder el equilibrio.',
         'Medí cada alcance y repetí con la otra pierna de apoyo.',
