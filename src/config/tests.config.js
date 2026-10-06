@@ -28,7 +28,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Mide cuánto podés rotar el hombro en flexión y extensión combinadas.',
       equipment: 'Ninguno (ideal: alguien que observe desde atrás)',
-      image: 'tests/apley-scratch.webp',
+      image: 'tests/apley-scratch.jpg',
       steps: [
         'Pasá un brazo por arriba del hombro y bajá la mano por la espalda.',
         'Pasá el otro brazo por abajo, desde la cintura hacia arriba.',
