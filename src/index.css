@@ -11,7 +11,26 @@
    
     --card: 0 0% 100%;
     --card-foreground: 210 15% 10%;
-   
+
+/* ---- agregar dentro de :root { } ---- */
+--popover: 0 0% 100%;
+--popover-foreground: 210 15% 10%;
+
+--chart-1: 152 39% 30%;   /* verde cultivo */
+--chart-2: 190 81% 25%;   /* cian medición */
+--chart-3: 14 78% 55%;    /* coral */
+--chart-4: 45 70% 50%;
+--chart-5: 260 40% 55%;
+
+--sidebar-background: 0 0% 100%;
+--sidebar-foreground: 210 15% 10%;
+--sidebar-primary: 152 39% 30%;
+--sidebar-primary-foreground: 0 0% 100%;
+--sidebar-accent: 100 8% 93%;
+--sidebar-accent-foreground: 210 15% 10%;
+--sidebar-border: 100 10% 85%;
+--sidebar-ring: 152 39% 30%;
+
     --primary: 152 39% 30%;          /* #2F6F4E verde cultivo */
     --primary-foreground: 0 0% 100%;
    
@@ -38,6 +57,8 @@
     --ring: 152 39% 30%;
    
     --radius: 0.25rem;               /* bordes casi rectos, no rounded-xl */
+
+    
   }
 
   .dark {
@@ -46,7 +67,26 @@
    
     --card: 215 13% 13%;             /* #1B2026 */
     --card-foreground: 90 10% 92%;
-   
+
+/* ---- agregar dentro de .dark { } ---- */
+--popover: 215 13% 13%;
+--popover-foreground: 90 10% 92%;
+
+--chart-1: 145 27% 52%;
+--chart-2: 192 51% 56%;
+--chart-3: 17 78% 66%;
+--chart-4: 45 60% 60%;
+--chart-5: 260 35% 65%;
+
+--sidebar-background: 215 13% 13%;
+--sidebar-foreground: 90 10% 92%;
+--sidebar-primary: 145 27% 52%;
+--sidebar-primary-foreground: 215 15% 10%;
+--sidebar-accent: 215 10% 18%;
+--sidebar-accent-foreground: 90 10% 92%;
+--sidebar-border: 210 9% 18%;
+--sidebar-ring: 145 27% 52%;
+
     --primary: 145 27% 52%;          /* #5FA37F */
     --primary-foreground: 215 15% 10%;
    
