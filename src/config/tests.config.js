@@ -234,7 +234,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Estima fuerza-resistencia de tren superior.',
       equipment: 'Ninguno',
-      image: 'tests/pushup.webp',
+      image: 'tests/pushup.jpeg',
       steps: [
         'Apoyate en manos y puntas de pie (o rodillas, si no podés en puntas de pie), cuerpo recto.',
         'Bajá hasta casi tocar el piso con el pecho.',
@@ -252,7 +252,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Estima fuerza-resistencia de tren inferior.',
       equipment: 'Ninguno',
-      image: 'tests/bodyweight-squat.webp',
+      image: 'tests/bodyweight-squat.jpg',
       steps: [
         'Parado, pies al ancho de hombros, bajá flexionando rodillas y cadera como si te fueras a sentar.',
         'Bajá hasta que los muslos queden paralelos al piso (o lo más cerca posible, sin dolor).',
@@ -270,7 +270,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Estima fuerza de tracción de tren superior.',
       equipment: 'Barra fija o mesa resistente para remo invertido',
-      image: 'tests/pullup.webp',
+      image: 'tests/pullup.jpg',
       steps: [
         'Si tenés barra: colgate y tirá hasta que el mentón pase la barra, sin balancearte.',
         'Si no tenés barra: hacé remo invertido bajo una mesa firme, tirando el pecho hacia ella.',
@@ -287,7 +287,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Resistencia isométrica de cuádriceps.',
       equipment: 'Una pared',
-      image: 'tests/wall-sit.webp',
+      image: 'tests/wall-sit.jpg',
       hasTimer: true,
       steps: [
         'Apoyá la espalda contra la pared y bajá hasta que las rodillas queden en 90°.',
@@ -305,7 +305,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Combina fuerza de core y tren superior con un patrón de transición.',
       equipment: 'Ninguno',
-      image: 'tests/plank-to-pushup.webp',
+      image: 'tests/plank-to-pushup.jpg',
       steps: [
         'Empezá en plancha sobre antebrazos.',
         'Subí a plancha alta apoyando una mano y después la otra (como un push-up invertido).',
@@ -325,7 +325,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Potencia explosiva de tren inferior.',
       equipment: 'Pared y algo para marcar la altura (tiza, cinta)',
-      image: 'tests/vertical-jump.webp',
+      image: 'tests/vertical-jump.jpg',
       highIntensity: true,
       steps: [
         'Parado de costado a la pared, marcá tu altura con el brazo extendido hacia arriba.',
@@ -342,7 +342,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Potencia de tren inferior en el plano horizontal.',
       equipment: 'Cinta métrica o espacio marcado en el piso',
-      image: 'tests/broad-jump.webp',
+      image: 'tests/broad-jump.jpg',
       highIntensity: true,
       steps: [
         'Parado con los pies juntos detrás de una línea.',
@@ -359,7 +359,7 @@ export const TESTS = [
       mode: 'professional',
       purpose: 'Potencia de tren superior.',
       equipment: 'Medicine ball',
-      image: 'tests/medball-throw.webp',
+      image: 'tests/medball-throw.jpg',
       highIntensity: true,
       steps: [
         'Sentado contra una pared (para que no ayude el tronco), sostené la pelota contra el pecho.',
@@ -376,7 +376,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Velocidad de aceleración.',
       equipment: 'Cronómetro (o app de celular) y espacio de 10m',
-      image: 'tests/sprint-10m.webp',
+      image: 'tests/sprint-10m.jpeg',
       highIntensity: true,
       steps: [
         'Marcá 10 metros en un espacio plano y seguro.',
@@ -393,7 +393,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Capacidad de cambiar de dirección rápidamente.',
       equipment: 'Cronómetro y 3 conos o marcas en el piso',
-      image: 'tests/agility-5-10-5.webp',
+      image: 'tests/agility-5-10-5.jpg',
       highIntensity: true,
       steps: [
         'Marcá tres líneas separadas por 5 metros cada una.',
