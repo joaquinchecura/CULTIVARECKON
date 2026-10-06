@@ -6,82 +6,178 @@
 
 @layer base {
   :root {
-    --background: 60 9% 97%;
-    --foreground: 220 15% 15%;
+    --background: 100 7% 96%;        /* #F5F6F3 papel */
+    --foreground: 210 15% 10%;       /* #12161C tinta */
+   
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
-    --primary: 195 60% 38%;
+    --card-foreground: 210 15% 10%;
+   
+    --primary: 152 39% 30%;          /* #2F6F4E verde cultivo */
     --primary-foreground: 0 0% 100%;
-    --secondary: 60 5% 93%;
-    --secondary-foreground: 220 15% 25%;
-    --muted: 60 5% 93%;
-    --muted-foreground: 220 10% 50%;
-    --accent: 168 45% 88%;
-    --accent-foreground: 168 50% 25%;
-    --destructive: 0 72% 51%;
+   
+    --secondary: 100 8% 93%;
+    --secondary-foreground: 210 15% 10%;
+   
+    --muted: 100 8% 93%;
+    --muted-foreground: 150 6% 40%;  /* #5B6560 tinta suave */
+   
+    --accent: 100 8% 93%;
+    --accent-foreground: 210 15% 10%;
+   
+    --destructive: 14 78% 55%;       /* #E8572E coral */
     --destructive-foreground: 0 0% 100%;
-    --border: 220 10% 88%;
-    --input: 220 10% 88%;
-    --ring: 195 60% 38%;
-    --radius: 0.75rem;
-    --chart-1: 195 60% 38%;
-    --chart-2: 168 45% 45%;
-    --chart-3: 220 15% 55%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --font-inter: 'Inter', sans-serif;
-    --font-playfair: 'Playfair Display', serif;
+   
+    /* Tokens propios de Reckon (no son de shadcn por defecto) */
+    --measure: 190 81% 25%;          /* #0E7490 cian de medición */
+    --measure-soft: 190 45% 93%;
+    --alert: 14 78% 55%;             /* mismo que destructive, alias semántico */
+    --alert-soft: 14 70% 95%;
+   
+    --border: 100 10% 85%;           /* #DDE1DB */
+    --input: 100 10% 85%;
+    --ring: 152 39% 30%;
+   
+    --radius: 0.25rem;               /* bordes casi rectos, no rounded-xl */
   }
 
   .dark {
-    --background: 220 20% 10%;
-    --foreground: 60 9% 94%;
-    --card: 220 18% 13%;
-    --card-foreground: 60 9% 94%;
-    --popover: 220 18% 13%;
-    --popover-foreground: 60 9% 94%;
-    --primary: 195 60% 50%;
-    --primary-foreground: 220 20% 10%;
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 60 9% 85%;
-    --muted: 220 15% 18%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 168 40% 20%;
-    --accent-foreground: 168 45% 75%;
-    --destructive: 0 62% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 22%;
-    --input: 220 15% 22%;
-    --ring: 195 60% 50%;
+    --background: 215 15% 10%;       /* #14181E */
+    --foreground: 90 10% 92%;        /* #EDEFEA */
+   
+    --card: 215 13% 13%;             /* #1B2026 */
+    --card-foreground: 90 10% 92%;
+   
+    --primary: 145 27% 52%;          /* #5FA37F */
+    --primary-foreground: 215 15% 10%;
+   
+    --secondary: 215 10% 18%;
+    --secondary-foreground: 90 10% 92%;
+   
+    --muted: 215 10% 18%;
+    --muted-foreground: 100 6% 68%;
+   
+    --accent: 215 10% 18%;
+    --accent-foreground: 90 10% 92%;
+   
+    --destructive: 17 78% 66%;       /* #F08361 */
+    --destructive-foreground: 215 15% 10%;
+   
+    --measure: 192 51% 56%;          /* #4FB8D2 */
+    --measure-soft: 193 30% 16%;
+    --alert: 17 78% 66%;
+    --alert-soft: 17 35% 17%;
+   
+    --border: 210 9% 18%;            /* #2A2F33 */
+    --input: 210 9% 18%;
+    --ring: 145 27% 52%;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+/* ============================================================
+   RECKON — clases de componente
+   Agregá esto en @layer components de tu globals.css / index.css,
+   después del bloque de tokens. Reescribe .step-card y .badge-pill
+   si ya existían con otro estilo (rounded-xl + sombra) — acá van
+   planas, sin sombra, acorde a la nueva dirección visual.
+   ============================================================ */
+
+   @layer base {
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    h1, h2, h3, .font-display {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      letter-spacing: -0.01em;
+    }
+    .font-data, .mono-data {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    }
   }
-  body {
-    @apply bg-background text-foreground font-inter;
+  
+  @layer components {
+    /* Card neutra genérica — Profile, Plan, secciones de Evaluations */
+    .step-card {
+      background: hsl(var(--card));
+      border: 1px solid hsl(var(--border));
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+  
+    /* Encabezado de sección con "marca de regla" — opcional, para
+       títulos de sección (ej. en Evaluations, Plan). Uso:
+       <div class="ruler-header"><h2>Movilidad</h2></div> */
+    .ruler-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .ruler-header h2 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: hsl(var(--muted-foreground));
+      white-space: nowrap;
+    }
+    .ruler-header::after {
+      content: '';
+      flex: 1;
+      height: 6px;
+      background-image: repeating-linear-gradient(
+        90deg, hsl(var(--muted-foreground)) 0 1px, transparent 1px 8px
+      );
+      opacity: 0.35;
+    }
+  
+    /* Card con borde-calibre — tests, y cualquier item "medible" */
+    .measure-card {
+      background: hsl(var(--card));
+      border-left: 3px solid hsl(var(--measure));
+      border-radius: 2px;
+      padding: 1.1rem 1.25rem;
+    }
+  
+    /* Alerta (PAR-Q, dolor, contraindicaciones) */
+    .reckon-alert {
+      background: hsl(var(--alert-soft));
+      border-left: 3px solid hsl(var(--alert));
+      border-radius: 2px;
+      padding: 0.875rem 1.125rem;
+    }
+    .reckon-alert .title { color: hsl(var(--alert)); font-weight: 600; font-size: 0.8125rem; }
+    .reckon-alert .body { font-size: 0.8125rem; color: hsl(var(--foreground)); margin-top: 0.25rem; }
+  
+    /* Valor numérico destacado (reps, cm, seg, puntajes) */
+    .measure-value {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    .measure-unit {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 0.75rem;
+      color: hsl(var(--muted-foreground));
+    }
+  
+    /* Badge genérico (reemplaza badge-pill si ya existía) */
+    .badge-pill {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .badge-pill.level-basico     { background: hsl(var(--alert-soft)); color: hsl(var(--alert)); }
+    .badge-pill.level-intermedio { background: hsl(var(--measure-soft)); color: hsl(var(--measure)); }
+    .badge-pill.level-avanzado   { background: hsl(var(--primary) / 0.12); color: hsl(var(--primary)); }
+  
+    /* Badge de modo (Autoevaluable / Con ayuda / Con profesional) */
+    .mode-badge {
+      font-size: 0.6875rem; font-weight: 600;
+      padding: 0.2rem 0.5rem; border-radius: 3px;
+      white-space: nowrap;
+    }
+    .mode-badge.self         { background: hsl(var(--primary) / 0.12); color: hsl(var(--primary)); }
+    .mode-badge.helper       { background: hsl(var(--measure-soft)); color: hsl(var(--measure)); }
+    .mode-badge.professional { background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
   }
-  h1, h2, h3 {
-    @apply font-inter;
-  }
-}
-
-.font-display {
-  font-family: var(--font-playfair);
-}
-
-.step-card {
-  @apply bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200;
-}
-
-.section-divider {
-  @apply border-t border-border my-8;
-}
-
-.badge-pill {
-  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
-}
