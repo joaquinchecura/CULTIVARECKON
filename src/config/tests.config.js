@@ -46,7 +46,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Detecta acortamiento del flexor de cadera (psoas/recto femoral).',
       equipment: 'Camilla, cama o mesa donde colgar una pierna',
-      image: 'tests/thomas-test.webp',
+      image: 'tests/thomas-test.jpg',
       steps: [
         'Sentate en el borde de una cama y acostate llevando ambas rodillas al pecho.',
         'Soltá una pierna dejándola colgar fuera del borde, sosteniendo la otra contra el pecho.',
@@ -64,7 +64,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Mide la dorsiflexión de tobillo — clave para sentadillas profundas.',
       equipment: 'Una pared y una cinta métrica',
-      image: 'tests/knee-to-wall.webp',
+      image: 'tests/knee-to-wall.jpg',
       steps: [
         'Parate de frente a una pared, con un pie apuntando hacia ella.',
         'Doblá la rodilla tratando de tocar la pared sin levantar el talón.',
@@ -82,7 +82,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Evalúa cuánto rota tu columna media/alta — importante en levantamientos.',
       equipment: 'Un bastón o palo de escoba (opcional)',
-      image: 'tests/thoracic-rotation.webp',
+      image: 'tests/thoracic-rotation.jpg',
       steps: [
         'Arrodillate con las caderas quietas (podés apoyarte contra una pared con la cadera).',
         'Cruzá los brazos sobre el pecho o sostené un bastón.',
@@ -100,7 +100,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Chequea movilidad y dolor en extensión de zona lumbar.',
       equipment: 'Ninguno',
-      image: 'tests/lumbar-extension.webp',
+      image: 'tests/lumbar-extension.jpg',
       steps: [
         'Acostate boca abajo, manos a la altura de los hombros.',
         'Empujá con los brazos levantando el torso, dejando la cadera en el piso.',
