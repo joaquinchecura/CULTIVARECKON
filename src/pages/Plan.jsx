@@ -354,25 +354,25 @@ export default function Plan() {
       <div className="step-card space-y-4">
         <h2 className="font-semibold text-foreground">Estado de tus evaluaciones</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${profile ? 'bg-green-50 border-green-200' : 'bg-secondary/50 border-border'}`}>
-            <User className={`w-6 h-6 ${profile ? 'text-green-600' : 'text-muted-foreground'}`} />
-            <span className={`text-xs font-medium ${profile ? 'text-green-700' : 'text-muted-foreground'}`}>Perfil</span>
-            {profile && <CheckCircle2 className="w-4 h-4 text-green-600" />}
+          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${profile ? 'bg-primary/10 border-primary/30' : 'bg-secondary/50 border-border'}`}>
+            <User className={`w-6 h-6 ${profile ? 'text-primary' : 'text-muted-foreground'}`} />
+            <span className={`text-xs font-medium ${profile ? 'text-primary' : 'text-muted-foreground'}`}>Perfil</span>
+            {profile && <CheckCircle2 className="w-4 h-4 text-primary" />}
           </div>
-          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${health ? 'bg-green-50 border-green-200' : 'bg-secondary/50 border-border'}`}>
-            <Heart className={`w-6 h-6 ${health ? 'text-green-600' : 'text-muted-foreground'}`} />
-            <span className={`text-xs font-medium ${health ? 'text-green-700' : 'text-muted-foreground'}`}>Salud</span>
-            {health && <CheckCircle2 className="w-4 h-4 text-green-600" />}
+          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${health ? 'bg-vital/10 border-vital/30' : 'bg-secondary/50 border-border'}`}>
+            <Heart className={`w-6 h-6 ${health ? 'text-vital' : 'text-muted-foreground'}`} />
+            <span className={`text-xs font-medium ${health ? 'text-vital' : 'text-muted-foreground'}`}>Salud</span>
+            {health && <CheckCircle2 className="w-4 h-4 text-vital" />}
           </div>
-          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${assessment ? 'bg-green-50 border-green-200' : 'bg-secondary/50 border-border'}`}>
-            <Ruler className={`w-6 h-6 ${assessment ? 'text-green-600' : 'text-muted-foreground'}`} />
-            <span className={`text-xs font-medium ${assessment ? 'text-green-700' : 'text-muted-foreground'}`}>Cuerpo</span>
-            {assessment && <CheckCircle2 className="w-4 h-4 text-green-600" />}
+          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${assessment ? 'bg-measure/10 border-measure/30' : 'bg-secondary/50 border-border'}`}>
+            <Ruler className={`w-6 h-6 ${assessment ? 'text-measure' : 'text-muted-foreground'}`} />
+            <span className={`text-xs font-medium ${assessment ? 'text-measure' : 'text-muted-foreground'}`}>Cuerpo</span>
+            {assessment && <CheckCircle2 className="w-4 h-4 text-measure" />}
           </div>
-          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${test ? 'bg-green-50 border-green-200' : 'bg-secondary/50 border-border'}`}>
-            <Dumbbell className={`w-6 h-6 ${test ? 'text-green-600' : 'text-muted-foreground'}`} />
-            <span className={`text-xs font-medium ${test ? 'text-green-700' : 'text-muted-foreground'}`}>Tests</span>
-            {test && <CheckCircle2 className="w-4 h-4 text-green-600" />}
+          <div className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${test ? 'bg-nutri/10 border-nutri/30' : 'bg-secondary/50 border-border'}`}>
+            <Dumbbell className={`w-6 h-6 ${test ? 'text-nutri' : 'text-muted-foreground'}`} />
+            <span className={`text-xs font-medium ${test ? 'text-nutri' : 'text-muted-foreground'}`}>Tests</span>
+            {test && <CheckCircle2 className="w-4 h-4 text-nutri" />}
           </div>
         </div>
       </div>
@@ -392,14 +392,14 @@ export default function Plan() {
             <DataCard icon={Ruler} label="Altura" value={profile.height_cm ? `${profile.height_cm} cm` : null} />
             {health && (
               <>
-                <DataCard icon={Brain} label="Motivación" value={health.motivation_level ? `${health.motivation_level}/10` : null} color="text-purple-500" />
-                <DataCard icon={Battery} label="FC reposo" value={health.resting_heart_rate ? `${health.resting_heart_rate} lpm` : null} color="text-orange-500" />
+                <DataCard icon={Brain} label="Motivación" value={health.motivation_level ? `${health.motivation_level}/10` : null} color="text-mind" />
+                <DataCard icon={Battery} label="FC reposo" value={health.resting_heart_rate ? `${health.resting_heart_rate} lpm` : null} color="text-vital" />
               </>
             )}
             {assessment && (
               <>
-                <DataCard icon={Apple} label="Proteína" value={assessment.protein_intake_g ? `${assessment.protein_intake_g} g/día` : null} color="text-green-500" />
-                <DataCard icon={Droplets} label="Agua" value={assessment.water_intake_liters ? `${assessment.water_intake_liters} L/día` : null} color="text-blue-500" />
+                <DataCard icon={Apple} label="Proteína" value={assessment.protein_intake_g ? `${assessment.protein_intake_g} g/día` : null} color="text-nutri" />
+                <DataCard icon={Droplets} label="Agua" value={assessment.water_intake_liters ? `${assessment.water_intake_liters} L/día` : null} color="text-hydro" />
               </>
             )}
           </div>
