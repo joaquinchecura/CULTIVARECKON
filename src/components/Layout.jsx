@@ -77,7 +77,7 @@ export default function Layout() {
       {/* Mobile topbar */}
 <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
   <Link to="/" className="flex items-center gap-2">
-    <img src="/icons/icon-192.png" alt="CultivaFitness" className="w-6 h-6 rounded-md" />
+    <img src="/icons/icon-192x192.png" alt="CultivaFitness" className="w-6 h-6 rounded-md" />
     <span className="font-semibold text-sm">CultivaFitness RECKON</span>
   </Link>
   <button onClick={() => setMobileOpen(!mobileOpen)} className="p-3 -mr-2 text-muted-foreground hover:text-foreground">
