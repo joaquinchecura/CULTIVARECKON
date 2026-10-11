@@ -65,7 +65,6 @@ module.exports = {
 			border: 'hsl(var(--sidebar-border))',
 			ring: 'hsl(var(--sidebar-ring))'
 		  },
-		  // Tokens propios de Reckon — ver reckon-theme.css para --measure/--alert
 		  measure: {
 			DEFAULT: 'hsl(var(--measure))',
 			soft: 'hsl(var(--measure-soft))',
@@ -93,3 +92,4 @@ module.exports = {
 	},
 	plugins: [require("tailwindcss-animate")],
   }
+  
