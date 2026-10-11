@@ -25,17 +25,19 @@ export default function Layout() {
     <div className="min-h-screen bg-background flex">
       {/* Sidebar desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border fixed inset-y-0 left-0 z-20">
-        <div className="px-6 py-8 border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Activity className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-semibold text-sm text-foreground">CULTIVAFITNESS RECKON</h1>
-              <p className="text-xs text-muted-foreground">Tu plan personalizado</p>
-            </div>
-          </div>
-        </div>
+      <div className="px-6 py-8 border-b border-border">
+  <Link to="/" className="flex items-center gap-2">
+    <img
+      src="/icons/icon-192x192.png"
+      alt="CultivaFitness"
+      className="w-8 h-8 rounded-lg flex-shrink-0"
+    />
+    <div>
+      <h1 className="font-semibold text-sm text-foreground">CULTIVAFITNESS RECKON</h1>
+      <p className="text-xs text-muted-foreground">Tu plan personalizado</p>
+    </div>
+  </Link>
+</div>
         <nav className="flex-1 px-3 py-6 space-y-1">
           {navItems.map(({ path, label, icon: Icon }) => (
             <Link
@@ -73,14 +75,15 @@ export default function Layout() {
       </aside>
 
       {/* Mobile topbar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-sm">CultivaFitness RECKON</span>
-        </div>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="p-3 -mr-2 text-muted-foreground hover:text-foreground">
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </div>
+<div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
+  <Link to="/" className="flex items-center gap-2">
+    <img src="/icons/icon-192.png" alt="CultivaFitness" className="w-6 h-6 rounded-md" />
+    <span className="font-semibold text-sm">CultivaFitness RECKON</span>
+  </Link>
+  <button onClick={() => setMobileOpen(!mobileOpen)} className="p-3 -mr-2 text-muted-foreground hover:text-foreground">
+    {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+  </button>
+</div>
 
       {/* Mobile nav */}
       {mobileOpen && (

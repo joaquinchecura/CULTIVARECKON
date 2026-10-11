@@ -48,6 +48,10 @@ export default {
         },
         measure: { DEFAULT: 'hsl(var(--measure))', soft: 'hsl(var(--measure-soft))' },
         alert: { DEFAULT: 'hsl(var(--alert))', soft: 'hsl(var(--alert-soft))' },
+        mind:  { DEFAULT: 'hsl(var(--mind))',  soft: 'hsl(var(--mind-soft))' },
+vital: { DEFAULT: 'hsl(var(--vital))', soft: 'hsl(var(--vital-soft))' },
+nutri: { DEFAULT: 'hsl(var(--nutri))', soft: 'hsl(var(--nutri-soft))' },
+hydro: { DEFAULT: 'hsl(var(--hydro))', soft: 'hsl(var(--hydro-soft))' },
       },
       keyframes: {
         'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },

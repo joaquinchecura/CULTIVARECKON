@@ -12,7 +12,16 @@
     --card: 0 0% 100%;
     --card-foreground: 210 15% 10%;
 
-/* ---- agregar dentro de :root { } ---- */
+/* dentro de :root { } */
+--mind: 262 52% 55%;        /* violeta — mentalidad/motivación */
+--mind-soft: 262 45% 95%;
+--vital: 28 85% 52%;         /* ámbar — signos vitales/energía */
+--vital-soft: 28 70% 95%;
+--nutri: 142 45% 40%;        /* verde nutrición (distinto del primary) */
+--nutri-soft: 142 40% 93%;
+--hydro: 199 75% 45%;        /* celeste — hidratación */
+--hydro-soft: 199 60% 94%;
+
 --popover: 0 0% 100%;
 --popover-foreground: 210 15% 10%;
 
@@ -68,7 +77,16 @@
     --card: 215 13% 13%;             /* #1B2026 */
     --card-foreground: 90 10% 92%;
 
-/* ---- agregar dentro de .dark { } ---- */
+/* dentro de .dark { } */
+--mind: 262 55% 68%;
+--mind-soft: 262 30% 18%;
+--vital: 28 80% 62%;
+--vital-soft: 28 40% 17%;
+--nutri: 142 40% 55%;
+--nutri-soft: 142 25% 16%;
+--hydro: 199 65% 60%;
+--hydro-soft: 199 35% 16%;
+
 --popover: 215 13% 13%;
 --popover-foreground: 90 10% 92%;
 
