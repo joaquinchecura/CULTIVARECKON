@@ -118,26 +118,6 @@ export default function Home() {
         })}
       </div>
 
-      {/* Specialist CTA */}
-      <div className="border border-primary/20 rounded-xl p-5 bg-primary/5 flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <HeadphonesIcon className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <p className="font-semibold text-foreground text-sm">¿Tenés dudas?</p>
-            <p className="text-xs text-muted-foreground">Hablá directamente con un especialista de CultivaFitness.</p>
-          </div>
-        </div>
-        <button
-          onClick={() => setShowContact(true)}
-          className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors whitespace-nowrap"
-        >
-          <HeadphonesIcon className="w-4 h-4" />
-          Hablar con Especialista
-        </button>
-      </div>
-
       {/* Info block */}
       <div className="border border-border rounded-xl p-6 bg-card">
         <div className="flex items-start gap-3">
