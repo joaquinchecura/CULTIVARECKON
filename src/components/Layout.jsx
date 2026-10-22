@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Activity, ClipboardList, Dumbbell, User, BarChart3, Menu, X, LogOut, HeadphonesIcon } from 'lucide-react';
+import { Activity, ClipboardList, Dumbbell, User, BarChart3, Menu, X, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
@@ -15,7 +15,6 @@ const navItems = [
 export default function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [showContact, setShowContact] = useState(false);
   const { logout } = useAuth();
 
   const handleLogout = () => logout();
@@ -24,19 +23,19 @@ export default function Layout() {
     <div className="min-h-screen bg-background flex">
       {/* Sidebar desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border fixed inset-y-0 left-0 z-20">
-      <div className="px-6 py-8 border-b border-border">
-  <Link to="/" className="flex items-center gap-2">
-    <img
-      src="/icons/icon-192x192.png"
-      alt="CultivaFitness"
-      className="w-8 h-8 rounded-lg flex-shrink-0"
-    />
-    <div>
-      <h1 className="font-semibold text-sm text-foreground">CULTIVAFITNESS RECKON</h1>
-      <p className="text-xs text-muted-foreground">Tu plan personalizado</p>
-    </div>
-  </Link>
-</div>
+        <div className="px-6 py-8 border-b border-border">
+          <Link to="/" className="flex items-center gap-2">
+            <img
+              src="/icons/icon-192x192.png"
+              alt="CultivaFitness"
+              className="w-8 h-8 rounded-lg flex-shrink-0"
+            />
+            <div>
+              <h1 className="font-semibold text-sm text-foreground">CULTIVAFITNESS RECKON</h1>
+              <p className="text-xs text-muted-foreground">Tu plan personalizado</p>
+            </div>
+          </Link>
+        </div>
         <nav className="flex-1 px-3 py-6 space-y-1">
           {navItems.map(({ path, label, icon: Icon }) => (
             <Link
@@ -56,13 +55,6 @@ export default function Layout() {
         </nav>
         <div className="px-6 py-4 border-t border-border space-y-3">
           <button
-            onClick={() => setShowContact(true)}
-            className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors w-full"
-          >
-            <HeadphonesIcon className="w-4 h-4" />
-            Hablar con Especialista
-          </button>
-          <button
             onClick={handleLogout}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
           >
@@ -74,15 +66,15 @@ export default function Layout() {
       </aside>
 
       {/* Mobile topbar */}
-<div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
-  <Link to="/" className="flex items-center gap-2">
-    <img src="/icons/icon-192x192.png" alt="CultivaFitness" className="w-6 h-6 rounded-md" />
-    <span className="font-semibold text-sm">CultivaFitness RECKON</span>
-  </Link>
-  <button onClick={() => setMobileOpen(!mobileOpen)} className="p-3 -mr-2 text-muted-foreground hover:text-foreground">
-    {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-  </button>
-</div>
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
+          <img src="/icons/icon-192x192.png" alt="CultivaFitness" className="w-6 h-6 rounded-md" />
+          <span className="font-semibold text-sm">CultivaFitness RECKON</span>
+        </Link>
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="p-3 -mr-2 text-muted-foreground hover:text-foreground">
+          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
 
       {/* Mobile nav */}
       {mobileOpen && (
@@ -108,13 +100,6 @@ export default function Layout() {
             </nav>
             <div className="px-3 py-4 border-t border-border space-y-1">
               <button
-                onClick={() => { setShowContact(true); setMobileOpen(false); }}
-                className="flex items-center gap-3 px-3 py-3 w-full rounded-lg text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
-              >
-                <HeadphonesIcon className="w-4 h-4" />
-                Hablar con Especialista
-              </button>
-              <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 px-3 py-3 w-full rounded-lg text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
               >
@@ -132,17 +117,6 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
-
-      {/* Mobile floating button */}
-      <button
-        onClick={() => setShowContact(true)}
-        className="md:hidden fixed bottom-6 right-6 z-30 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-full shadow-lg hover:bg-primary/90 transition-colors text-sm font-medium"
-      >
-        <HeadphonesIcon className="w-4 h-4" />
-        Especialista
-      </button>
-
-      {showContact && <ContactSpecialistModal onClose={() => setShowContact(false)} />}
     </div>
   );
 }

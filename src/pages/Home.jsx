@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, User, ClipboardList, Dumbbell, BarChart3, CheckCircle2, AlertCircle, HeadphonesIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import ContactSpecialistModal from '@/components/ContactSpecialistModal';
 
 const steps = [
   {
@@ -42,7 +41,6 @@ const steps = [
 ];
 
 export default function Home() {
-  const [showContact, setShowContact] = useState(false);
   const { data: profiles } = useQuery({ queryKey: ['profiles'], queryFn: () => entities.UserProfile.list() });
   const { data: healthRecords } = useQuery({ queryKey: ['health'], queryFn: () => entities.HealthHistory.list() });
   const { data: plans } = useQuery({ queryKey: ['plans'], queryFn: () => entities.FitnessPlan.list() });
@@ -59,7 +57,6 @@ export default function Home() {
 
   return (
     <div className="space-y-10">
-      {showContact && <ContactSpecialistModal onClose={() => setShowContact(false)} />}
       {/* Header */}
       <div>
         <p className="text-sm font-medium text-primary uppercase tracking-widest mb-2">RECKON AI</p>
