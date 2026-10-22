@@ -28,7 +28,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Mide cuánto podés rotar el hombro en flexión y extensión combinadas.',
       equipment: 'Ninguno (ideal: alguien que observe desde atrás)',
-      image: 'tests/apley-scratch.jpg',
+      image: 'tests/apley-scratch.webp',
       steps: [
         'Pasá un brazo por arriba del hombro y bajá la mano por la espalda.',
         'Pasá el otro brazo por abajo, desde la cintura hacia arriba.',
@@ -46,7 +46,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Detecta acortamiento del flexor de cadera (psoas/recto femoral).',
       equipment: 'Camilla, cama o mesa donde colgar una pierna',
-      image: 'tests/thomas-test.jpg',
+      image: 'tests/thomas-test.webp',
       steps: [
         'Sentate en el borde de una cama y acostate llevando ambas rodillas al pecho.',
         'Soltá una pierna dejándola colgar fuera del borde, sosteniendo la otra contra el pecho.',
@@ -64,7 +64,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Mide la dorsiflexión de tobillo — clave para sentadillas profundas.',
       equipment: 'Una pared y una cinta métrica',
-      image: 'tests/knee-to-wall.jpg',
+      image: 'tests/knee-to-wall.webp',
       steps: [
         'Parate de frente a una pared, con un pie apuntando hacia ella.',
         'Doblá la rodilla tratando de tocar la pared sin levantar el talón.',
@@ -82,7 +82,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Evalúa cuánto rota tu columna media/alta — importante en levantamientos.',
       equipment: 'Un bastón o palo de escoba (opcional)',
-      image: 'tests/thoracic-rotation.jpg',
+      image: 'tests/thoracic-rotation.webp',
       steps: [
         'Arrodillate con las caderas quietas (podés apoyarte contra una pared con la cadera).',
         'Cruzá los brazos sobre el pecho o sostené un bastón.',
@@ -100,7 +100,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Chequea movilidad y dolor en extensión de zona lumbar.',
       equipment: 'Ninguno',
-      image: 'tests/lumbar-extension.jpg',
+      image: 'tests/lumbar-extension.webp',
       steps: [
         'Acostate boca abajo, manos a la altura de los hombros.',
         'Empujá con los brazos levantando el torso, dejando la cadera en el piso.',
@@ -121,7 +121,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Mide resistencia del core en una postura isométrica.',
       equipment: 'Ninguno',
-      image: 'tests/plank.jpeg',
+      image: 'tests/plank.webp',
       hasTimer: true,
       steps: [
         'Apoyate sobre antebrazos y puntas de pie, cuerpo en línea recta de cabeza a talones.',
@@ -140,7 +140,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Detecta asimetrías de fuerza entre el lado izquierdo y derecho del core.',
       equipment: 'Ninguno',
-      image: 'tests/side-plank.jpg',
+      image: 'tests/side-plank.webp',
       hasTimer: true,
       steps: [
         'Acostate de lado, apoyado en un antebrazo, cuerpo en línea recta.',
@@ -161,7 +161,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Evalúa control motor lumbopélvico y coordinación brazo-pierna opuesta.',
       equipment: 'Ninguno',
-      image: 'tests/bird-dog.jpeg',
+      image: 'tests/bird-dog.webp',
       steps: [
         'Apoyate en cuatro patas, manos bajo hombros, rodillas bajo cadera.',
         'Extendé un brazo y la pierna opuesta al mismo tiempo, sin que la espalda se mueva.',
@@ -179,7 +179,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Mide estabilidad lumbar al mover brazos y piernas de forma independiente.',
       equipment: 'Ninguno',
-      image: 'tests/dead-bug.jpg',
+      image: 'tests/dead-bug.webp',
       steps: [
         'Acostate boca arriba, brazos al techo, rodillas y caderas en 90°.',
         'Bajá un brazo y la pierna opuesta hacia el piso, sin que la zona lumbar se despegue.',
@@ -197,7 +197,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Fuerza y estabilidad de cadera en apoyo unipodal.',
       equipment: 'Ninguno',
-      image: 'tests/glute-bridge.jpg',
+      image: 'tests/glute-bridge.webp',
       steps: [
         'Acostate boca arriba, una rodilla flexionada con el pie en el piso.',
         'Estirá la otra pierna al aire.',
@@ -215,7 +215,7 @@ export const TESTS = [
       mode: 'professional',
       purpose: 'Estima riesgo de lesión de miembro inferior por asimetrías de alcance.',
       equipment: 'Cinta en el piso marcando 3 direcciones, o cinta métrica',
-      image: 'tests/y-balance.jpg',
+      image: 'tests/y-balance.webp',
       steps: [
         'Parado en una pierna, alcanzá con la otra lo más lejos posible en 3 direcciones (adelante, atrás-adentro, atrás-afuera) sin perder el equilibrio.',
         'Medí cada alcance y repetí con la otra pierna de apoyo.',
@@ -234,7 +234,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Estima fuerza-resistencia de tren superior.',
       equipment: 'Ninguno',
-      image: 'tests/pushup.jpeg',
+      image: 'tests/pushup.webp',
       steps: [
         'Apoyate en manos y puntas de pie (o rodillas, si no podés en puntas de pie), cuerpo recto.',
         'Bajá hasta casi tocar el piso con el pecho.',
@@ -252,7 +252,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Estima fuerza-resistencia de tren inferior.',
       equipment: 'Ninguno',
-      image: 'tests/bodyweight-squat.jpg',
+      image: 'tests/bodyweight-squat.webp',
       steps: [
         'Parado, pies al ancho de hombros, bajá flexionando rodillas y cadera como si te fueras a sentar.',
         'Bajá hasta que los muslos queden paralelos al piso (o lo más cerca posible, sin dolor).',
@@ -270,7 +270,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Estima fuerza de tracción de tren superior.',
       equipment: 'Barra fija o mesa resistente para remo invertido',
-      image: 'tests/pullup.jpg',
+      image: 'tests/pullup.webp',
       steps: [
         'Si tenés barra: colgate y tirá hasta que el mentón pase la barra, sin balancearte.',
         'Si no tenés barra: hacé remo invertido bajo una mesa firme, tirando el pecho hacia ella.',
@@ -287,7 +287,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Resistencia isométrica de cuádriceps.',
       equipment: 'Una pared',
-      image: 'tests/wall-sit.jpg',
+      image: 'tests/wall-sit.webp',
       hasTimer: true,
       steps: [
         'Apoyá la espalda contra la pared y bajá hasta que las rodillas queden en 90°.',
@@ -305,7 +305,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Combina fuerza de core y tren superior con un patrón de transición.',
       equipment: 'Ninguno',
-      image: 'tests/plank-to-pushup.jpg',
+      image: 'tests/plank-to-pushup.webp',
       steps: [
         'Empezá en plancha sobre antebrazos.',
         'Subí a plancha alta apoyando una mano y después la otra (como un push-up invertido).',
@@ -325,7 +325,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Potencia explosiva de tren inferior.',
       equipment: 'Pared y algo para marcar la altura (tiza, cinta)',
-      image: 'tests/vertical-jump.jpg',
+      image: 'tests/vertical-jump.webp',
       highIntensity: true,
       steps: [
         'Parado de costado a la pared, marcá tu altura con el brazo extendido hacia arriba.',
@@ -342,7 +342,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Potencia de tren inferior en el plano horizontal.',
       equipment: 'Cinta métrica o espacio marcado en el piso',
-      image: 'tests/broad-jump.jpg',
+      image: 'tests/broad-jump.webp',
       highIntensity: true,
       steps: [
         'Parado con los pies juntos detrás de una línea.',
@@ -359,7 +359,7 @@ export const TESTS = [
       mode: 'professional',
       purpose: 'Potencia de tren superior.',
       equipment: 'Medicine ball',
-      image: 'tests/medball-throw.jpg',
+      image: 'tests/medball-throw.webp',
       highIntensity: true,
       steps: [
         'Sentado contra una pared (para que no ayude el tronco), sostené la pelota contra el pecho.',
@@ -376,7 +376,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Velocidad de aceleración.',
       equipment: 'Cronómetro (o app de celular) y espacio de 10m',
-      image: 'tests/sprint-10m.jpeg',
+      image: 'tests/sprint-10m.webp',
       highIntensity: true,
       steps: [
         'Marcá 10 metros en un espacio plano y seguro.',
@@ -393,7 +393,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Capacidad de cambiar de dirección rápidamente.',
       equipment: 'Cronómetro y 3 conos o marcas en el piso',
-      image: 'tests/agility-5-10-5.jpg',
+      image: 'tests/agility-5-10-5.webp',
       highIntensity: true,
       steps: [
         'Marcá tres líneas separadas por 5 metros cada una.',
@@ -484,7 +484,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Fuerza funcional de tren inferior — muy usado con adultos mayores y principiantes.',
       equipment: 'Una silla sin apoyabrazos',
-      image: 'tests/chair-test.jpg',
+      image: 'tests/chair-test.webp',
       hasTimer: true,
       timerTargetSec: 30,
       steps: [
@@ -505,7 +505,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Evalúa movilidad combinada de tobillo, cadera, columna y hombros.',
       equipment: 'Ninguno (opcional: un palo para sostener arriba de la cabeza)',
-      image: 'tests/deep-squat.jpg',
+      image: 'tests/deep-squat.webp',
       steps: [
         'Parado, pies al ancho de hombros, brazos extendidos arriba de la cabeza.',
         'Bajá en sentadilla lo más profundo que puedas, manteniendo talones en el piso y brazos arriba.',
@@ -525,7 +525,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Control de estabilidad en apoyo de una sola pierna.',
       equipment: 'Ninguno',
-      image: 'tests/balance.jpg',
+      image: 'tests/balance.webp',
       hasTimer: true,
       steps: [
         'Parate en una pierna, ojos abiertos, mirando al frente.',
@@ -546,7 +546,7 @@ export const TESTS = [
       mode: 'self',
       purpose: 'Combina fuerza, movilidad y equilibrio — predictor general de condición física.',
       equipment: 'Ninguno',
-      image: 'tests/srt.jpg',
+      image: 'tests/srt.webp',
       steps: [
         'Parado descalzo, sentate en el piso y después volvé a pararte, usando la menor cantidad de apoyos posible (manos, rodillas, antebrazos).',
         'Empezás con 10 puntos y restás 1 por cada apoyo que uses (0.5 si perdés el equilibrio).',
@@ -563,7 +563,7 @@ export const TESTS = [
       mode: 'helper',
       purpose: 'Estima capacidad aeróbica sin necesidad de correr.',
       equipment: 'Un escalón de ~30cm y cronómetro',
-      image: 'tests/step-test.jpg',
+      image: 'tests/step-test.webp',
       highIntensity: true,
       steps: [
         'Subí y bajá un escalón de 30cm a ritmo constante durante 3 minutos.',

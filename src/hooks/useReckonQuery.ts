@@ -5,12 +5,15 @@ import { useEffect } from 'react';
  * Hook que lee de localStorage y se sincroniza automáticamente
  * cuando otros tabs/formularios guardan datos.
  */
-export function useReckonQuery(key, fetchFn) {
+export function useReckonQuery<T>(
+  key: string,
+  fetchFn: () => T | Promise<T>
+) {
   const queryClient = useQueryClient();
 
   // Escuchar cambios de localStorage de otras tabs/instancias
   useEffect(() => {
-    const handler = (e) => {
+    const handler = (e: StorageEvent) => {
       if (e.key === '_reckon_sync' || e.key === 'reckon_data') {
         queryClient.invalidateQueries({ queryKey: [key] });
       }
@@ -19,12 +22,12 @@ export function useReckonQuery(key, fetchFn) {
     return () => window.removeEventListener('storage', handler);
   }, [key, queryClient]);
 
-  return useQuery({
+  return useQuery<T>({
     queryKey: [key],
     queryFn: fetchFn,
     staleTime: 0,           // Siempre considerar stale (fuerza re-lectura)
-    gcTime: Infinity,     // Mantener en caché de React Query
+    gcTime: Infinity,       // Mantener en caché de React Query
     refetchOnWindowFocus: true,  // Recargar cuando vuelve el foco
-    refetchOnMount: 'always',  // Siempre recargar al montar
+    refetchOnMount: 'always',    // Siempre recargar al montar
   });
 }
