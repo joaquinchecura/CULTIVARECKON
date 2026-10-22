@@ -3,7 +3,6 @@ import { Activity, ClipboardList, Dumbbell, User, BarChart3, Menu, X, LogOut, He
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
-import ContactSpecialistModal from './ContactSpecialistModal';
 
 const navItems = [
   { path: '/', label: 'Inicio', icon: Activity },
